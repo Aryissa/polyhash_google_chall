@@ -16,6 +16,6 @@ L'équipe
 
 à compléter par chaque personne: 1 ligne par personne, indiquant le nom et l'adresse mail de la personne
 
-- Erwan Brunelliere
+- Erwan Brunelliere: erwan.brunelliere@etu.univ-nantes.fr
 - Gabriel Comte: gabriel.comte@etu.univ-nantes.fr
 - allan guillard : allan.guillard@etu.univ-nantes.fr
