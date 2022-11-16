@@ -18,4 +18,4 @@ L'équipe
 
 - Erwan Brunelliere
 - Gabriel Comte: gabriel.comte@etu.univ-nantes.fr
-- allan guillard
+- allan guillard : allan.guillard@etu.univ-nantes.fr
