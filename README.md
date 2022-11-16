@@ -19,6 +19,6 @@ L'équipe
 - Erwan Brunelliere: erwan.brunelliere@etu.univ-nantes.fr
 - Gabriel Comte: gabriel.comte@etu.univ-nantes.fr
 - allan guillard : allan.guillard@etu.univ-nantes.fr
-- evan godec : evan.godec@etu.univ-nantes.fr
+- Evan Godec : evan.godec@etu.univ-nantes.fr
 
 L'objectif de ce projet est de faire delivrer un maximum de cadeau au père noël. Cependant, des contraintes de temp, de "carburant" et de points. 
