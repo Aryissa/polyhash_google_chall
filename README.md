@@ -19,3 +19,4 @@ L'équipe
 - Erwan Brunelliere: erwan.brunelliere@etu.univ-nantes.fr
 - Gabriel Comte: gabriel.comte@etu.univ-nantes.fr
 - allan guillard : allan.guillard@etu.univ-nantes.fr
+- Evan Godec : evan.godec@etu.univ-nantes.fr
