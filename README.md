@@ -18,4 +18,4 @@ L'équipe
 
 - Erwan Brunelliere
 - Gabriel Comte
--allan guillard
+- allan guillard
