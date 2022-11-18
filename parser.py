@@ -16,7 +16,7 @@ def parse_challenge(filename: str) -> object:
 
     first_line = lines[0].split(' ')
     challenge["time"] = first_line[0]
-    challenge["delivey_distance"] = first_line[1]
+    challenge["delivery_distance"] = first_line[1]
     challenge["acceleration_ranges"] = first_line[2]
     challenge["nb_gifts"] = first_line[3]
     lines.pop(0)
@@ -35,7 +35,7 @@ def parse_challenge(filename: str) -> object:
                                             "x": line_content[3],
                                             "y": line_content[4]})
         else:
-            print(line_content)
+            #print(line_content)
             challenge["accelerations"].append({"weight_interval_from": last_weight,
                                                "weight_interval_to": line_content[0],
                                                "max_acceleration": line_content[1]})

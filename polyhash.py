@@ -8,7 +8,8 @@
 # compréhension et faciliter le travail collaboratif
 from parser import parse_challenge
 from solver import solve
-from scorer import score_solution
+#from scorer import score_solution
+from Game import Game
 
 if __name__ == "__main__":
     # On fournit ici un exemple permettant de passer un simple
@@ -22,6 +23,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     challenge = parse_challenge(args.challenge)
-    solution = solve(challenge)
-    print(f"Score: {score_solution(solution)}")
+    game = Game(challenge)
+    #solution = solve(challenge)
+    #print(f"Score: {score_solution(solution)}")
 
