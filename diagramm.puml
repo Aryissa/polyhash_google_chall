@@ -1,0 +1,42 @@
+@startuml
+class Game {
+    + max_time: int
+    + current_time: int
+    + range: int
+    + acceleration_range: dict
+    + nb_gift: int
+    + parse()
+}
+
+class Santa {
+    + weight: int
+    + x: int
+    + y: int
+    + vx: int
+    + vy: int
+    + nb_carrots: int
+    + accelerate(direction, value)
+    + float()
+    + load_carrot(nb: int)
+    + load_gift(gift: Gift)
+    + deliver(gift: Gift): bool
+}
+
+class Gift {
+    + name: str
+    + weight: int
+    + x: int
+    + y: int
+    + score: int
+}
+
+class Navigation {
+    + coordinates: []
+    + range: int
+    + acceleration_range: dict
+}
+
+Game o-- "*" Gift
+Santa o-- "*" Gift
+Game *- Santa
+@enduml
