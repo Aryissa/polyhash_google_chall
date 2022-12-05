@@ -1,4 +1,4 @@
-from gift import Gift
+from Gift import Gift
 
 
 class Game:
