@@ -37,7 +37,6 @@ def parse_challenge(filename: str) -> object:
                                             "ratio": int(line_content[1])/int(line_content[2])})
                                             
         else:
-            #print(line_content)
             challenge["accelerations"].append({"weight_interval_from": last_weight,
                                                "weight_interval_to": line_content[0],
                                                "max_acceleration": line_content[1]})
