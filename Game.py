@@ -15,8 +15,11 @@ class Game:
                 gift['weight'],
                 gift['x'],
                 gift['y'],
-                gift['score']
+                gift['score'],
+                gift['ratio']
             ))
-        self.acceleration_ranges = dict()
+        self.acceleration_ranges_and_weight = dict()
+        self.acceleration_ranges = []
         for r in challenge['accelerations']:
-            self.acceleration_ranges[r['weight_interval_to']] = r['max_acceleration']
+            self.acceleration_ranges_and_weight[r['weight_interval_to']] = r['max_acceleration']
+            self.acceleration_ranges.append(r['max_acceleration'])
