@@ -25,6 +25,8 @@ class Santa:
         if self.nb_carrots == 0:
             raise Exception('PLUS DE CARROTES !!!')
         speed = self.max_speed()
+        if value > speed:
+            raise Exception('Changement de vitesse trop importante')
         if direction == 'vertical':
             self.vy += value
             if value > 0:
@@ -73,5 +75,5 @@ class Santa:
                 return v
 
     def print(self):
-        size = len(self.output.split('\n'))
+        size = len(self.output.split('\n')) - 1
         return str(size) + self.output
