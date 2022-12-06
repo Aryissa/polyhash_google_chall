@@ -22,7 +22,11 @@ class Santa:
         self.output += '\nFloat 1'
 
     def accelerate(self, direction: str, value: int):
+        if self.nb_carrots == 0:
+            raise Exception('PLUS DE CARROTES !!!')
         speed = self.max_speed()
+        if value > speed:
+            raise Exception('Changement de vitesse trop importante')
         if direction == 'vertical':
             self.vy += value
             if value > 0:
@@ -66,10 +70,10 @@ class Santa:
         self.output += f'\nDeliverGift {gift.name}'
 
     def max_speed(self):
-        for k, v in self.game.acceleration_ranges:
+        for k, v in self.game.acceleration_ranges.items():
             if k > self.weight:
                 return v
 
     def print(self):
-        size = len(self.output.split('\n'))
+        size = len(self.output.split('\n')) - 1
         return str(size) + self.output
