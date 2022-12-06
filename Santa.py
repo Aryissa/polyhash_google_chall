@@ -68,7 +68,7 @@ class Santa:
         self.output += f'\nDeliverGift {gift.name}'
 
     def max_speed(self):
-        for k, v in self.game.acceleration_ranges:
+        for k, v in self.game.acceleration_ranges.items():
             if k > self.weight:
                 return v
 
