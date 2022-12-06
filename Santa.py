@@ -22,6 +22,8 @@ class Santa:
         self.output += '\nFloat 1'
 
     def accelerate(self, direction: str, value: int):
+        if self.nb_carrots == 0:
+            raise Exception('PLUS DE CARROTES !!!')
         speed = self.max_speed()
         if direction == 'vertical':
             self.vy += value
