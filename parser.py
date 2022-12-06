@@ -33,16 +33,18 @@ def parse_challenge(filename: str) -> object:
                                             "score": line_content[1],
                                             "weight": line_content[2],
                                             "x": line_content[3],
-                                            "y": line_content[4]})
+                                            "y": line_content[4],
+                                            "ratio": int(line_content[1])/int(line_content[2])})
+                                            
         else:
             #print(line_content)
             challenge["accelerations"].append({"weight_interval_from": last_weight,
                                                "weight_interval_to": line_content[0],
                                                "max_acceleration": line_content[1]})
             last_weight = line_content[0]
-
     return challenge
 
 
 if __name__ == '__main__':
-    pprint(parse_challenge("input/e_excellent_weather.in.txt"))
+    pprint(parse_challenge("input/a_an_example.in.txt"))
+
