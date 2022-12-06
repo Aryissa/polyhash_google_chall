@@ -12,7 +12,6 @@ class Santa:
         self.nb_carrots = 0
         self.weight = 0
         self.game = game
-        # TODO : Incrémenter le output avec les actions
         self.output = ''
         self.gifts = []
         self.score = 0
