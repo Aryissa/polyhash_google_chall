@@ -22,12 +22,15 @@ class Santa:
         self.y += self.vy
 
     def accelerate(self, direction: str, value: int):
+        speed = self.max_speed()
         if direction == 'vertical':
             self.vy += value
-            # TODO : ne pas dépasser la vitesse max (accel_range du jeu)
+            if self.vy > speed:
+                self.vy = speed
         else:
             self.vx += value
-            # TODO : ne pas dépasser la vitesse max (accel_range du jeu)
+            if self.vx > speed:
+                self.vx = speed
         self.nb_carrots -= 1
         self.weight -= 1
 
@@ -50,3 +53,7 @@ class Santa:
         self.weight -= gift.weight
         self.gifts.remove(gift)
 
+    def max_speed(self):
+        for k, v in self.game.acceleration_ranges:
+            if k > self.weight:
+                return v
