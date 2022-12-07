@@ -20,9 +20,5 @@ if __name__ == "__main__":
     print(enumerate_vectors(3))
 
 
-def get_distance_x(x1, x2):
+def get_distance_x_or_y(x1, x2):
     return abs(x1 - x2)
-
-
-def get_distance_y(y1, y2):
-    return abs(y1 - y2)
