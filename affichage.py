@@ -8,7 +8,6 @@ window = Tk()
 pc("input/d_decorated_houses.in.txt")
 liste = challenge["gifts_list"]
 
-
 min_max_x=[]
 min_max_y=[]
 
