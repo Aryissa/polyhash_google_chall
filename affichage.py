@@ -5,7 +5,7 @@ from tkinter import *
 
 window = Tk()
 
-pc("input/a_an_example.in.txt")
+pc("input/e_excellent_weather.in.txt")
 liste = challenge["gifts_list"]
 min_max_x=[]
 min_max_y=[]
