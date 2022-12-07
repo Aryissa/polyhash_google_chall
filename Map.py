@@ -30,7 +30,7 @@ class Map:
         list_map=[]
         point_origine_map=(self.left,self.top)
         for i in range(vmax):
-            
+            print(i)
 
 
 
