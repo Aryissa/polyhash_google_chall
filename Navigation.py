@@ -46,30 +46,30 @@ class Navigation:
         return False
 
     def line(self, x, y):
-        coordinates = [(gift.x, gift.y) for gift in self.game.gifts]
         lines_x = dict()
         lines_y = dict()
         max_count = 0
         max_vector = (0, 0)
         # from x
         for vector in utils.enumerate_vectors(4):
-            count = 0
-            for i in range(1000):
-                if (x + vector[0] * (i + 1), y + vector[1] * i) in coordinates:
-                    count += 1
-            lines_x[vector] = count
-            if count > max_count:
-                max_count = count
+            count_h = 0
+            count_v = 0
+            a, b = vector
+            for gift in self.game.gifts:
+                if a * gift.x <= 0 or b * gift.y <= 0:
+                    # Pour ne pas aller dans les 2 sens
+                    continue
+                # On regarde si le cadeau est sur la droite
+                if (a / b) * gift.x + a == gift.y:
+                    count_h += gift.score
+                if (a / b) * gift.x - a == gift.y:
+                    count_v += gift.score
+            lines_x[vector] = count_h
+            lines_y[vector] = count_v
+            if count_h > max_count:
+                max_count = count_h
                 max_vector = vector
-        # from y
-        for vector in utils.enumerate_vectors(4):
-            count = 0
-            for i in range(1000):
-                if (x + vector[0] * i, y + vector[1] * (i + 1)) in coordinates:
-                    count += 1
-            lines_y[vector] = count
-            if count > max_count:
-                max_count = count
+            if count_v > max_count:
+                max_count = count_v
                 max_vector = vector
-
         return max_vector, max_count
