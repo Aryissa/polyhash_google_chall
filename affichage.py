@@ -5,14 +5,18 @@ from tkinter import *
 
 window = Tk()
 
-pc("input/e_excellent_weather.in.txt")
+pc("input/a_an_example.in.txt")
 liste = challenge["gifts_list"]
+
+
 min_max_x=[]
 min_max_y=[]
 
 for i in range(0,len(liste)):
     min_max_x.append(int(liste[i]["x"]))
     min_max_y.append(int(liste[i]["y"]))
+
+dist = challenge["delivery_distance"]
 
 min_x=min(min_max_x)
 max_x=max(min_max_x)
@@ -55,7 +59,7 @@ def affichage():
         y=(int(y)+abs(int(min_y)))*ratio_y
         print("y ",i," : ",y)
         i+=1
-        w.create_oval(x, y, int(x)+10, int(y)+10, fill="red")
+        w.create_oval(int(x)-(int(dist)/2), int(y)-(int(dist)/2), int(x)+(int(dist)/2), int(y)+(int(dist)/2), fill="red")
 
 
 
