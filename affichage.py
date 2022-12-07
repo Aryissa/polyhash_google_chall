@@ -5,7 +5,7 @@ from tkinter import *
 
 window = Tk()
 
-pc("input/a_an_example.in.txt")
+pc("input/d_decorated_houses.in.txt")
 liste = challenge["gifts_list"]
 
 
@@ -17,7 +17,7 @@ for i in range(0,len(liste)):
     min_max_y.append(int(liste[i]["y"]))
 
 dist = challenge["delivery_distance"]
-
+print(dist)
 min_x=min(min_max_x)
 max_x=max(min_max_x)
 min_y=min(min_max_y)
@@ -34,10 +34,6 @@ w = Canvas(window, width=largeur+10, height=longueur+10)
 
 ratio_x = largeur/fenetre_x
 ratio_y = longueur/fenetre_y
-
-print(ratio_x)
-print(ratio_y)
-
 #print(int(min_x)*ratio_x)
 
 w.pack()
@@ -48,18 +44,11 @@ def affichage():
     i = 0
     while(i!=len(liste)):
         x=liste[i]["x"]
-        print("x : ",x)
-        print(ratio_x)
         x=(int(x)+abs(int(min_x)))*ratio_x
-        print("x ",i," : ",x)
         y=liste[i]["y"]
-        print("y : ",y)
-        print(ratio_y)
-
         y=(int(y)+abs(int(min_y)))*ratio_y
-        print("y ",i," : ",y)
         i+=1
-        w.create_oval(int(x)-(int(dist)/2), int(y)-(int(dist)/2), int(x)+(int(dist)/2), int(y)+(int(dist)/2), fill="red")
+        w.create_oval(int(x)-(int(dist)/2)*ratio_x, int(y)-(int(dist)/2)*ratio_y, int(x)+(int(dist)/2)*ratio_x, int(y)+(int(dist)/2)*ratio_y, fill="red")
 
 
 
