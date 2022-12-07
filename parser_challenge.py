@@ -5,9 +5,9 @@
 """
 from pprint import pprint
 
-
+challenge = dict()
 def parse_challenge(filename: str) -> object:
-    challenge = dict()
+    
     with open(filename, 'r') as infile:  # ouverture du fichier (mode r: read)
         data = infile.read()  # lecture du contenu du fichier
     """Lit un fichier de challenge et extrait les informations nécessaires.
@@ -44,6 +44,8 @@ def parse_challenge(filename: str) -> object:
     return challenge
 
 
+
 if __name__ == '__main__':
     pprint(parse_challenge("input/a_an_example.in.txt"))
+
 
