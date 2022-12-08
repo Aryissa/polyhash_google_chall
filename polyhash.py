@@ -17,7 +17,6 @@ if __name__ == "__main__":
     # argument (le fichier du challenge) en paramètre. N'hésitez pas à
     # compléter avec d'autres paramètres/options.
     import argparse
-
     parser = argparse.ArgumentParser(description='Solve Poly# challenge.')
     parser.add_argument('challenge', type=str,
                         help='challenge definition filename',
@@ -44,3 +43,5 @@ if __name__ == "__main__":
 
     print(santa.print())
     print(santa.score)
+
+    game.affichage()
