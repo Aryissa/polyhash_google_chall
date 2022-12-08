@@ -15,11 +15,13 @@ class Santa:
         self.output = ''
         self.gifts = []
         self.score = 0
+        self.time = 0
 
     def float(self):
         self.x += self.vx
         self.y += self.vy
         self.output += '\nFloat 1'
+        self.time += 1
 
     def accelerate(self, direction: str, value: int):
         if self.nb_carrots == 0:
@@ -73,6 +75,7 @@ class Santa:
         for k, v in self.game.acceleration_ranges.items():
             if k > self.weight:
                 return v
+        return 0
 
     def print(self):
         size = len(self.output.split('\n')) - 1
