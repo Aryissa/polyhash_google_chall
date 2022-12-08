@@ -15,17 +15,19 @@ class Santa:
         self.output = ''
         self.gifts = []
         self.score = 0
+        self.time = 0
 
     def float(self):
         self.x += self.vx
         self.y += self.vy
+        self.time += 1
         self.output += '\nFloat 1'
 
     def accelerate(self, direction: str, value: int):
         if self.nb_carrots == 0:
             raise Exception('PLUS DE CARROTES !!!')
         speed = self.max_speed()
-        if value > speed:
+        if abs(value) > speed:
             raise Exception('Changement de vitesse trop importante')
         if direction == 'vertical':
             self.vy += value
