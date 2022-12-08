@@ -29,7 +29,7 @@ if __name__ == "__main__":
     # print(f"Score: {score_solution(solution)}")
     santa = Santa(game)
     navigation = Navigation(santa)
-
+    santa.affichage()
     game.gifts = sorted(game.gifts, key=lambda gift: gift.ratio)
 
     x = 0
@@ -44,4 +44,4 @@ if __name__ == "__main__":
     print(santa.print())
     print(santa.score)
 
-    game.affichage()
+
