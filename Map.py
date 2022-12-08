@@ -43,9 +43,6 @@ class Map:
                 x_final=x_origine+pas
                 if(y_final-pas<self.bot):
                     if y_final==self.bot:
-                        point_origine_map=(x_origine,y_origine)
-                        point_final=(x_final,y_final)
-                        list_map.append(Carre(point_origine_map,point_final))
                         self.print_all(list_map)
                         return list_map
                     else:
@@ -73,7 +70,7 @@ class Map:
             #print("X_final: ",x_final," Right: ", self.right)
             point_final=(x_final,y_final)
             point_origine_map=(x_origine,y_origine)
-        self.print_all(list_map)
+        #self.print_all(list_map)
         return list_map
     
     def print_all(self,list):
