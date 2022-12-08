@@ -6,7 +6,7 @@
 
 # Vous pouvez structurer votre code en modules pour améliorer la
 # compréhension et faciliter le travail collaboratif
-from parser import parse_challenge
+from parser_challenge import parse_challenge
 from solver import solve
 #from scorer import score_solution
 from Game import Game
@@ -24,6 +24,7 @@ if __name__ == "__main__":
 
     challenge = parse_challenge(args.challenge)
     game = Game(challenge)
+    game.affichage()
     #solution = solve(challenge)
     #print(f"Score: {score_solution(solution)}")
 
