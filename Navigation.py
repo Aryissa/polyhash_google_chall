@@ -50,10 +50,12 @@ class Navigation:
         lines_y = dict()
         max_count = 0
         max_vector = (0, 0)
-        # from x
+
         for vector in utils.enumerate_vectors(4):
             count_h = 0
             count_v = 0
+            h = []
+            v = []
             a, b = vector
             for gift in self.game.gifts:
                 if a * gift.x <= 0 or b * gift.y <= 0:
@@ -61,15 +63,26 @@ class Navigation:
                     continue
                 # On regarde si le cadeau est sur la droite
                 if (a / b) * gift.x + a == gift.y:
-                    count_h += gift.score
+                    h.append(gift)
                 if (a / b) * gift.x - a == gift.y:
-                    count_v += gift.score
-            lines_x[vector] = count_h
-            lines_y[vector] = count_v
-            if count_h > max_count:
-                max_count = count_h
-                max_vector = vector
-            if count_v > max_count:
-                max_count = count_v
-                max_vector = vector
-        return max_vector, max_count
+                    v.append(gift)
+            lines_x[vector] = h
+            lines_y[vector] = v
+            #if count_h > max_count:
+            #    max_count = count_h
+            #    max_vector = vector
+            #if count_v > max_count:
+            #    max_count = count_v
+            #    max_vector = vector
+        return lines_x, lines_y
+
+    def real_lines(self):
+        v_x, v_y = self.line(0, 0)
+        for vector, gifts in v_x:
+            a=0
+
+    def max_speed(self, weight):
+        for k, v in self.game.acceleration_ranges.items():
+            if k > weight:
+                return v
+
