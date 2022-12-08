@@ -5,6 +5,13 @@ import utils
 from utils import get_distance
 
 
+def gift_here(x, y, gifts):
+    for gift in gifts:
+        if gift.x == x and gift.y == y:
+            return True
+    return False
+
+
 class Navigation:
 
     def __init__(self, game, santa):
@@ -39,21 +46,10 @@ class Navigation:
         dx = abs(self.santa.x - x)
         dy = abs(self.santa.y - y)
 
-    def gift_here(self, x, y):
-        for gift in self.game.gifts:
-            if gift.x == x and gift.y == y:
-                return True
-        return False
-
     def line(self, x, y):
         lines_x = dict()
         lines_y = dict()
-        max_count = 0
-        max_vector = (0, 0)
-
         for vector in utils.enumerate_vectors(4):
-            count_h = 0
-            count_v = 0
             h = []
             v = []
             a, b = vector
@@ -62,27 +58,80 @@ class Navigation:
                     # Pour ne pas aller dans les 2 sens
                     continue
                 # On regarde si le cadeau est sur la droite
-                if (a / b) * gift.x + a == gift.y:
-                    h.append(gift)
-                if (a / b) * gift.x - a == gift.y:
+                if gift.x % a == 0 and x + (b / a) * gift.x + b == y + gift.y:
                     v.append(gift)
+                if gift.x % a == 0 and x + (b / a) * gift.x - b == y + gift.y:
+                    h.append(gift)
+            reverse = False
+            if a < 0:
+                reverse = True
+            h = sorted(h, key=lambda g: g.x, reverse=reverse)
+            h = sorted(h, key=lambda g: g.x, reverse=reverse)
             lines_x[vector] = h
             lines_y[vector] = v
-            #if count_h > max_count:
-            #    max_count = count_h
-            #    max_vector = vector
-            #if count_v > max_count:
-            #    max_count = count_v
-            #    max_vector = vector
+
         return lines_x, lines_y
 
-    def real_lines(self):
-        v_x, v_y = self.line(0, 0)
-        for vector, gifts in v_x:
-            a=0
+    def lines_actions(self, x, y):
+        v_x, v_y = self.line(x, y)
+        actions = []
+        for vector, gifts in v_x.items():
+            i = 0
+            weight = 5
+            action = dict()
+            action['vector'] = vector
+            action['gifts'] = []
+            action['score'] = 0
+            action['time'] = 1
+            while len(gifts) != len(action['gifts']):
+                if gift_here(x + vector[0] * (i + 1), y + vector[1] * i, gifts):
+                    gift = gifts[len(action['gifts'])]
+                    weight += gift.weight
+                    if self.max_speed(weight) < vector[0] or self.max_speed(weight) < vector[1]:
+                        break
+                    action['gifts'].append(gift)
+                    action['score'] += gift.score
+                action['time'] += 1
+                i += 1
+            action['time'] = action['time'] * 2 + 4
+            actions.append(action)
+        return max(actions, key=lambda a: a['score'] / a['time'])
+
+    def lines_navigate_x(self, action):
+        y_depart = self.santa.y
+        a, b = action['vector']
+        self.santa.load_carrot(7)
+        for g in action['gifts']:
+            self.game.gifts.remove(g)
+            self.santa.load_gift(g)
+        self.santa.accelerate('horizontal', a)
+        if action['time'] == 1:
+            self.santa.deliver(self.santa.gifts[0])
+            self.santa.accelerate('horizontal', -a)
+            self.santa.accelerate('horizontal', -a)
+            self.santa.accelerate('horizontal', a)
+            return
+        if gift_here(self.santa.x, self.santa.y, self.santa.gifts):
+            self.santa.deliver(self.santa.gifts[0])
+        self.santa.accelerate('vertical', b)
+        while len(self.santa.gifts) != 0:
+            if gift_here(self.santa.x, self.santa.y, self.santa.gifts):
+                self.santa.deliver(self.santa.gifts[0])
+            self.santa.float()
+        self.santa.accelerate('horizontal', -a)
+        self.santa.accelerate('vertical', -b)
+        self.santa.accelerate('vertical', -b)
+        self.santa.accelerate('horizontal', -a)
+        while self.santa.y != y_depart:
+            self.santa.float()
+        self.santa.accelerate('vertical', b)
+        self.santa.load_carrot(1)
+        self.santa.accelerate('horizontal', a)
+
+
 
     def max_speed(self, weight):
         for k, v in self.game.acceleration_ranges.items():
             if k > weight:
                 return v
-
+        return 0
