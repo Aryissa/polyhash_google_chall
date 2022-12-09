@@ -29,7 +29,6 @@ if __name__ == "__main__":
     # print(f"Score: {score_solution(solution)}")
     santa = Santa(game)
     navigation = Navigation(santa, game)
-    santa.affichage()
     game.gifts = sorted(game.gifts, key=lambda gift: gift.ratio)
 
     if False:
@@ -48,5 +47,6 @@ if __name__ == "__main__":
                 break
             navigation.lines_navigate_x(action)
 
-    print(santa.print())
+    santa.print()
     print(f"\nScore : {santa.score}\nTemps : {santa.time}/{game.max_time}")
+    santa.affichage()
