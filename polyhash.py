@@ -28,20 +28,25 @@ if __name__ == "__main__":
     # solution = solve(challenge)
     # print(f"Score: {score_solution(solution)}")
     santa = Santa(game)
-    navigation = Navigation(santa)
-
+    navigation = Navigation(santa, game)
+    santa.affichage()
     game.gifts = sorted(game.gifts, key=lambda gift: gift.ratio)
 
-    x = 0
-    while santa.time < game.max_time:
-        santa.load_gift(game.gifts[x])
-        x += 1
-        santa.load_carrot(10)
-        navigation.go_point(santa.gifts[0].x, santa.gifts[0].y)
-        santa.deliver(santa.gifts[0])
-        navigation.go_point(0, 0)
+    if False:
+        x = 0
+        while santa.time < game.max_time:
+            santa.load_gift(game.gifts[x])
+            x += 1
+            santa.load_carrot(10)
+            navigation.go_point(santa.gifts[0].x, santa.gifts[0].y)
+            santa.deliver(santa.gifts[0])
+            navigation.go_point(0, 0)
+    else:
+        while True:
+            action = navigation.lines_actions(0, 0)
+            if santa.time + action['time'] > game.max_time:
+                break
+            navigation.lines_navigate_x(action)
 
     print(santa.print())
-    print(santa.score)
-
-    game.affichage()
+    print(f"\nScore : {santa.score}\nTemps : {santa.time}/{game.max_time}")
