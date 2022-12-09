@@ -17,12 +17,13 @@ class Santa:
         self.gifts = []
         self.score = 0
         self.time = 0
+        self.nb_float = 0
 
     def float(self):
         self.x += self.vx
         self.y += self.vy
         self.time += 1
-        self.output += '\nFloat 1'
+        self.nb_float += 1
 
     def accelerate(self, direction: str, value: int):
         if self.nb_carrots == 0:
@@ -33,17 +34,17 @@ class Santa:
         if direction == 'vertical':
             self.vy += value
             if value > 0:
-                self.output += f'\nAccRight {value}'
+                self.add_output(f'AccRight {value}')
             else:
-                self.output += f'\nAccLeft {value}'
+                self.add_output(f'AccLeft {value}')
             if self.vy > speed:
                 self.vy = speed
         else:
             self.vx += value
             if value > 0:
-                self.output += f'\nAccUp {value}'
+                self.add_output(f'AccUp {value}')
             else:
-                self.output += f'\nAccDown {value}'
+                self.add_output(f'AccDown {value}')
             if self.vx > speed:
                 self.vx = speed
         self.nb_carrots -= 1
@@ -55,14 +56,14 @@ class Santa:
             raise Exception('Distance trop grande pour le ramassage de carrotes')
         self.nb_carrots += nb
         self.weight += nb
-        self.output += f'\nLoadCarrots {nb}'
+        self.add_output(f'LoadCarrots {nb}')
 
     def load_gift(self, gift: Gift):
         if get_distance(self.x, self.y, 0, 0) > self.game.range:
             raise Exception('Distance trop grande pour le ramassage de cadeaux')
         self.gifts.append(gift)
         self.weight += gift.weight
-        self.output += f'\nLoadGift {gift.name}'
+        self.add_output(f'LoadGift {gift.name}')
 
     def deliver(self, gift: Gift):
         if get_distance(self.x, self.y, gift.x, gift.y) > self.game.range:
@@ -70,7 +71,7 @@ class Santa:
         self.score += gift.score
         self.weight -= gift.weight
         self.gifts.remove(gift)
-        self.output += f'\nDeliverGift {gift.name}'
+        self.add_output(f'DeliverGift {gift.name}')
 
     def max_speed(self):
         for k, v in self.game.acceleration_ranges.items():
@@ -78,10 +79,19 @@ class Santa:
                 return v
         return 0
 
-    def print(self):
-        size = len(self.output.split('\n')) - 1
-        return str(size) + self.output
+    def add_output(self, string: str):
+        if self.nb_float:
+            self.output += f"\nFloat {self.nb_float}"
+            self.nb_float = 0
+        self.output += f"\n{string}"
 
+    def print(self):
+        self.add_output('')
+        size = len(self.output.split('\n')) - 2
+        final = str(size) + self.output
+        with open('output.txt', 'w') as outFile:
+            outFile.write(final)
+        return final
 
     def affichage(self):
 
