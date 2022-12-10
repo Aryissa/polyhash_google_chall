@@ -1,9 +1,9 @@
 from utils import get_distance
 from Gift import Gift
 from Game import Game
-from tkinter import *
-
-
+import matplotlib.pyplot as plt
+import matplotlib.image as img
+from matplotlib.offsetbox import TextArea, DrawingArea, OffsetImage, AnnotationBbox
 class Santa:
     def __init__(self, game: Game):
         self.x = 0
@@ -94,9 +94,7 @@ class Santa:
         return final
 
     def affichage(self):
-
-        window = Tk()
-
+        fig, ax = plt.subplots()
         min_max_x = []
         min_max_y = []
 
@@ -104,39 +102,29 @@ class Santa:
             min_max_x.append(gift.x)
             min_max_y.append(gift.y)
 
-        min_x = min(min_max_x)
-        max_x = max(min_max_x)
-        min_y = min(min_max_y)
-        max_y = max(min_max_y)
+        x = [min(min_max_x) - self.game.range, max(min_max_x) + self.game.range]
+        y = [min(min_max_y) - self.game.range, max(min_max_y) + self.game.range]
 
-        fenetre_x = abs(max_x) + abs(min_x)
-        fenetre_y = abs(max_y) + abs(min_y)
-
-        largeur = 500
-        longueur = 500
-
-        w = Canvas(window, width=largeur + 10, height=longueur + 10)
-
-        ratio_x = largeur / fenetre_x
-        ratio_y = longueur / fenetre_y
-
-        w.pack()
-
+        plt.xlim(x[0], x[1])
+        plt.ylim(y[0], y[1])
+        ax.set_aspect(1)
+        if (x[0] > y[0]):
+            z: int = x[0] / (y[0]*10)
+        else:
+            z: int = y[0] / (x[0]*10)
+        if(z<0.05):
+            z=0.05
+        print(z)
         for gift in self.game.gifts:
             x = gift.x
-            x = (x + abs(min_x)) * ratio_x
             y = gift.y
-            y = (y + abs(min_y)) * ratio_y
-            w.create_oval(x - (self.game.range / 2) * ratio_x, y - (self.game.range / 2) * ratio_y,
-                          x + (self.game.range / 2) * ratio_x, y + (self.game.range / 2) * ratio_y, fill="red")
+            circle = plt.Circle((x, y), self.game.range, color='r',fill=False)
+            ax.add_artist(circle)
+        hamster = img.imread('hamster.png')
 
-        x = [(0 + abs(min_y)) * ratio_x]
-        y = [(0 + abs(min_y)) * ratio_y]
-        x.append((self.x + abs(min_x)) * ratio_x)
-        y.append((self.y + abs(min_y)) * ratio_y)
 
-        w.create_line(x[0], y[0], x[1], y[1], fill="blue")
-        del (x[0])
-        del (y[0])
-
-        mainloop()
+        imagebox = OffsetImage(hamster, zoom=z)
+        ab = AnnotationBbox(imagebox, (0, 0))
+        ax.add_artist(ab)
+        plt.grid(linestyle='--')
+        plt.show()
