@@ -298,18 +298,3 @@ class Navigation:
             # TODO
             return 0
         return carrots
-
-
-        # if y > self.santa.y:
-        #     if self.santa.vy < 0:
-        #         self.set_vy_to_zero()
-        # if y < self.santa.y:
-        #     if self.santa.vy > 0:
-        #         self.set_vy_to_zero()
-
-        # if x > self.santa.x:
-        #     if self.santa.vx < 0:
-        #         self.set_vx_to_zero()
-        # if x < self.santa.x:
-        #     if self.santa.vx > 0:
-        #         self.set_vx_to_zero()
