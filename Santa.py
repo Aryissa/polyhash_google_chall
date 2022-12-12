@@ -3,7 +3,7 @@ from Gift import Gift
 from Game import Game
 import matplotlib.pyplot as plt
 import matplotlib.image as img
-from matplotlib.offsetbox import TextArea, DrawingArea, OffsetImage, AnnotationBbox
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 class Santa:
     def __init__(self, game: Game):
         self.x = 0
@@ -19,11 +19,25 @@ class Santa:
         self.time = 0
         self.nb_float = 0
 
+        self.fig, self.ax = plt.subplots()
+        min_max_x = []
+        min_max_y = []
+        for gift in self.game.gifts:
+            min_max_x.append(gift.x)
+            min_max_y.append(gift.y)
+        x = [min(min_max_x) - self.game.range, max(min_max_x) + self.game.range]
+        y = [min(min_max_y) - self.game.range, max(min_max_y) + self.game.range]
+        plt.xlim(x[0], x[1])
+        plt.ylim(y[0], y[1])
+        self.ax.set_aspect(1)
+
+
     def float(self):
         self.x += self.vx
         self.y += self.vy
         self.time += 1
         self.nb_float += 1
+        self.affichage()
 
     def accelerate(self, direction: str, value: int):
         if self.nb_carrots == 0:
@@ -95,37 +109,30 @@ class Santa:
         return final
 
     def affichage(self):
-        fig, ax = plt.subplots()
-        min_max_x = []
-        min_max_y = []
+        #mise en place de la fenetre d'affichage
 
-        for gift in self.game.gifts:
-            min_max_x.append(gift.x)
-            min_max_y.append(gift.y)
 
-        x = [min(min_max_x) - self.game.range, max(min_max_x) + self.game.range]
-        y = [min(min_max_y) - self.game.range, max(min_max_y) + self.game.range]
-
-        plt.xlim(x[0], x[1])
-        plt.ylim(y[0], y[1])
-        ax.set_aspect(1)
-        if (x[0] > y[0]):
-            z: int = x[0] / (y[0]*10)
-        else:
-            z: int = y[0] / (x[0]*10)
-        if(z<0.05):
-            z=0.05
-        print(z)
+        #affichage des cadeaux
         for gift in self.game.gifts:
             x = gift.x
             y = gift.y
             circle = plt.Circle((x, y), self.game.range, color='r',fill=False)
-            ax.add_artist(circle)
+            self.ax.add_artist(circle)
+
+        #mise en place du pere noel et de sa taille (le z)
+        z=0.05
         hamster = img.imread('hamster.png')
-
-
         imagebox = OffsetImage(hamster, zoom=z)
         ab = AnnotationBbox(imagebox, (0, 0))
-        ax.add_artist(ab)
+        self.ax.add_artist(ab)
         plt.grid(linestyle='--')
-        plt.show()
+
+        x_santa = [0]
+        y_santa = [0]
+        x_santa.append(self.x)
+        y_santa.append(self.y)
+        plt.quiver(x_santa[0], y_santa[0], x_santa[1], y_santa[1], angles='xy', scale_units='xy', scale=1)
+        del(x_santa[0])
+        del(y_santa[0])
+
+
