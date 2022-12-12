@@ -24,6 +24,16 @@ def enumerate_cases_in_range(x, y, r):
                 coords.append((i, j))
     return coords
 
+def gift_here(x, y, gifts):
+    for gift in gifts:
+        if gift.x == x and gift.y == y:
+            return True
+    return False
+
+
+def gifts_in_range(x, y, r, gifts):
+    return [g for g in gifts if get_distance(x, y, g.x, g.y) <= r]
+
 
 if __name__ == "__main__":
     print(enumerate_vectors(3))
