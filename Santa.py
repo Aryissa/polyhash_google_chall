@@ -97,6 +97,7 @@ class Santa:
 
         self.gifts.remove(gift)
         self.add_output(f'DeliverGift {gift.name}')
+        print(f'delivrage {gift.name} x:{gift.x} y:{gift.y}')
 
     def max_speed(self):
         for k, v in self.game.acceleration_ranges.items():
