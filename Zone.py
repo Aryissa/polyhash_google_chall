@@ -35,6 +35,19 @@ class Zone:
             return None
         return int(somme_moyenne/len(list_moyenne))
 
-    def clusterisation(self,moyenne_points):
-        return 0
+    def clusterisation(self,distance_moyenne):
+        list_cluster=[]
+        for gift_1 in self.gifts:
+            list_courante=[]
+            for list_c in list_cluster:
+                if gift_1 in list_c:
+                    list_courante=list_c
+                    list_cluster.remove(list_c)
+                    break;
+            for gift_2 in self.gifts:
+                if(gift_2 not in list_courante):
+                    if (int(gift_2["x"]) in range(int(gift_1["x"])-distance_moyenne,int(gift_1["x"])+distance_moyenne) and int(gift_2["y"]) in range(int(gift_1["y"])-distance_moyenne,int(gift_1["y"])+distance_moyenne)):
+                        list_courante.append(gift_2)
+            list_cluster.append(list_courante)
+        return list_cluster
 
