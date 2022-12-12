@@ -16,6 +16,15 @@ def enumerate_vectors(max_speed: int):
     return vectors
 
 
+def enumerate_cases_in_range(x, y, r):
+    coords = []
+    for i in range(x - r, x + r + 1):
+        for j in range(y - r, y + r + 1):
+            if get_distance(x, y, i, j) <= r:
+                coords.append((i, j))
+    return coords
+
+
 if __name__ == "__main__":
     print(enumerate_vectors(3))
 
