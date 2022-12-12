@@ -37,7 +37,7 @@ class Santa:
         self.y += self.vy
         self.time += 1
         self.nb_float += 1
-        self.affichage()
+        #self.affichage()
 
     def accelerate(self, direction: str, value: int):
         if self.nb_carrots == 0:
