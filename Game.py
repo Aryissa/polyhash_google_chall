@@ -20,5 +20,11 @@ class Game:
         for r in challenge['accelerations']:
             self.acceleration_ranges[int(r['weight_interval_to'])] = int(r['max_acceleration'])
 
-
+    def __str__(self):
+        s = ''
+        s += f'Temps imparti : {self.max_time}\n'
+        s += f'Nombre de cadeaux : {self.nb_gifts}\n'
+        score_max = sum([g.score for g in self.gifts])
+        s += f'Score max : {score_max}\n'
+        return s
 

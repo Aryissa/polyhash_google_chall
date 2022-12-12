@@ -25,6 +25,11 @@ if __name__ == "__main__":
 
     challenge = parse_challenge(args.challenge)
     game = Game(challenge)
+    print("=============")
+    print("Polyhash 2022")
+    print("=============")
+    print(f"Challenge {args.challenge}\n")
+    print(game)
     # solution = solve(challenge)
     # print(f"Score: {score_solution(solution)}")
     santa = Santa(game)
