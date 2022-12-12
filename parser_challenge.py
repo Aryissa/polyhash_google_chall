@@ -32,8 +32,8 @@ def parse_challenge(filename: str) -> object:
             challenge["gifts_list"].append({"name": line_content[0],
                                             "score": line_content[1],
                                             "weight": line_content[2],
-                                            "x": line_content[3],
-                                            "y": line_content[4],
+                                            "y": -int(line_content[3]),
+                                            "x": -int(line_content[4]),
                                             "ratio": int(line_content[1])/int(line_content[2])})
                                             
         else:

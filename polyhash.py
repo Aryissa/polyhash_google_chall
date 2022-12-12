@@ -35,7 +35,7 @@ if __name__ == "__main__":
     santa = Santa(game)
     navigation = Navigation(santa, game)
     game.gifts = sorted(game.gifts, key=lambda gift: gift.ratio)
-    santa.affichage()
+    #santa.affichage()
 
     if False:
         x = 0
