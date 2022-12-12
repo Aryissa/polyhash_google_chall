@@ -34,17 +34,17 @@ class Santa:
         if direction == 'vertical':
             self.vy += value
             if value > 0:
-                self.add_output(f'AccRight {value}')
+                self.add_output(f'AccUp {value}')
             else:
-                self.add_output(f'AccLeft {value}')
+                self.add_output(f'AccDown {-value}')
             if self.vy > speed:
                 self.vy = speed
         else:
             self.vx += value
             if value > 0:
-                self.add_output(f'AccUp {value}')
+                self.add_output(f'AccRight {value}')
             else:
-                self.add_output(f'AccDown {value}')
+                self.add_output(f'AccLeft {-value}')
             if self.vx > speed:
                 self.vx = speed
         self.nb_carrots -= 1
@@ -72,6 +72,7 @@ class Santa:
         self.weight -= gift.weight
         self.gifts.remove(gift)
         self.add_output(f'DeliverGift {gift.name}')
+        print(f'delivrage {gift.name} x:{gift.x} y:{gift.y}')
 
     def max_speed(self):
         for k, v in self.game.acceleration_ranges.items():
