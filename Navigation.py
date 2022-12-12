@@ -1,7 +1,7 @@
 import Game
 import Gift
 import Santa
-from utils import get_distance_x_or_y, enumerate_vectors
+from utils import get_distance_x_or_y, enumerate_vectors, enumerate_cases_in_range
 
 
 def gift_here(x, y, gifts):
@@ -285,6 +285,34 @@ class Navigation:
         self.santa.accelerate('vertical', b)
         self.santa.load_carrot(1)
         self.santa.accelerate('horizontal', a)
+
+    def line_r(self, x, y):
+        lines_x = dict()
+        lines_y = dict()
+        for vector in enumerate_vectors(4):
+            h = []
+            v = []
+            a, b = vector
+            for gift in self.game.gifts:
+                if a * gift.x <= 0 or b * gift.y <= 0:
+                    # Pour ne pas aller dans les 2 sens
+                    continue
+                # On regarde si le cadeau est sur la droite
+                x_res = x + (b / a) * gift.x + b
+                y_res = x + (b / a) * gift.x - b
+                if y + gift.y + self.game.range > x_res > y + gift.y - self.game.range:
+                    v.append(gift)
+                if y + gift.y + self.game.range > y_res > y + gift.y - self.game.range:
+                    h.append(gift)
+            reverse = False
+            if a < 0:
+                reverse = True
+            h = sorted(h, key=lambda g: g.x, reverse=reverse)
+            v = sorted(v, key=lambda g: g.x, reverse=reverse)
+            lines_x[vector] = h
+            lines_y[vector] = v
+
+        return lines_x, lines_y
 
     def max_speed(self, weight):
         for k, v in self.game.acceleration_ranges.items():

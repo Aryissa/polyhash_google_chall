@@ -48,17 +48,17 @@ class Santa:
         if direction == 'vertical':
             self.vy += value
             if value > 0:
-                self.add_output(f'AccRight {value}')
+                self.add_output(f'AccUp {value}')
             else:
-                self.add_output(f'AccLeft {value}')
+                self.add_output(f'AccDown {-value}')
             if self.vy > speed:
                 self.vy = speed
         else:
             self.vx += value
             if value > 0:
-                self.add_output(f'AccUp {value}')
+                self.add_output(f'AccRight {value}')
             else:
-                self.add_output(f'AccDown {value}')
+                self.add_output(f'AccLeft {-value}')
             if self.vx > speed:
                 self.vx = speed
         self.nb_carrots -= 1
