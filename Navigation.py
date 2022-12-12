@@ -1,14 +1,7 @@
 import Game
 import Gift
 import Santa
-from utils import get_distance_x_or_y, enumerate_vectors, enumerate_cases_in_range
-
-
-def gift_here(x, y, gifts):
-    for gift in gifts:
-        if gift.x == x and gift.y == y:
-            return True
-    return False
+from utils import get_distance_x_or_y, enumerate_vectors, enumerate_cases_in_range, gift_here, gifts_in_range
 
 
 class Navigation:
@@ -300,19 +293,80 @@ class Navigation:
                 # On regarde si le cadeau est sur la droite
                 x_res = x + (b / a) * gift.x + b
                 y_res = x + (b / a) * gift.x - b
-                if y + gift.y + self.game.range > x_res > y + gift.y - self.game.range:
+                if y + gift.y + self.game.range >= x_res >= y + gift.y - self.game.range:
                     v.append(gift)
-                if y + gift.y + self.game.range > y_res > y + gift.y - self.game.range:
+                if y + gift.y + self.game.range >= y_res >= y + gift.y - self.game.range:
                     h.append(gift)
-            reverse = False
-            if a < 0:
-                reverse = True
-            h = sorted(h, key=lambda g: g.x, reverse=reverse)
-            v = sorted(v, key=lambda g: g.x, reverse=reverse)
             lines_x[vector] = h
             lines_y[vector] = v
 
         return lines_x, lines_y
+
+    def lines_r_actions(self, x, y):
+        v_x, v_y = self.line_r(x, y)
+        actions = []
+        for vector, gifts in v_x.items():
+            i = 0
+            weight = 5
+            action = dict()
+            action['vector'] = vector
+            action['gifts'] = []
+            action['score'] = 0
+            action['time'] = 1
+            while len(gifts) != len(action['gifts']):
+                available_gifts = gifts_in_range(x + vector[0] * (i + 1), y + vector[1] * i, self.game.range, gifts)
+                available_gifts.sort(key=lambda g: g.score)
+                end = False
+                for gift in available_gifts:
+                    if gift in action['gifts']:
+                        continue
+                    weight += gift.weight
+                    if self.max_speed(weight) < abs(vector[0]) or self.max_speed(weight) < abs(vector[1]):
+                        end = True
+                        break
+                    action['gifts'].append(gift)
+                    action['score'] += gift.score
+                if end:
+                    break
+                action['time'] += 1
+
+                i += 1
+            action['time'] = action['time'] * 2 + 4
+
+            actions.append(action)
+        return max(actions, key=lambda a: a['score'] / a['time'])
+
+    def lines_r_navigate_x(self, action):
+        y_depart = self.santa.y
+        a, b = action['vector']
+        self.santa.load_carrot(7)
+        for g in action['gifts']:
+            self.game.gifts.remove(g)
+            self.santa.load_gift(g)
+        self.santa.accelerate('horizontal', a)
+        if action['time'] == 1:
+            for gift in gifts_in_range(self.santa.x, self.santa.y, slef.santa.range, self.santa.gifts):
+                self.santa.deliver(gift)
+            self.santa.accelerate('horizontal', -a)
+            self.santa.accelerate('horizontal', -a)
+            self.santa.accelerate('horizontal', a)
+            return
+        for gift in gifts_in_range(self.santa.x, self.santa.y, self.game.range, self.santa.gifts):
+            self.santa.deliver(gift)
+        self.santa.accelerate('vertical', b)
+        while len(self.santa.gifts) != 0:
+            for gift in gifts_in_range(self.santa.x, self.santa.y, self.game.range, self.santa.gifts):
+                self.santa.deliver(gift)
+            self.santa.float()
+        self.santa.accelerate('horizontal', -a)
+        self.santa.accelerate('vertical', -b)
+        self.santa.accelerate('vertical', -b)
+        self.santa.accelerate('horizontal', -a)
+        while self.santa.y != y_depart:
+            self.santa.float()
+        self.santa.accelerate('vertical', b)
+        self.santa.load_carrot(1)
+        self.santa.accelerate('horizontal', a)
 
     def max_speed(self, weight):
         for k, v in self.game.acceleration_ranges.items():
