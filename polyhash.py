@@ -13,6 +13,9 @@ from parser_challenge import parse_challenge
 from solver import solve
 # from scorer import score_solution
 from Game import Game
+from Map import Map
+from Zone import Zone
+from pprint import pprint
 
 if __name__ == "__main__":
     # On fournit ici un exemple permettant de passer un simple
@@ -34,11 +37,20 @@ if __name__ == "__main__":
     print(game)
     # solution = solve(challenge)
     # print(f"Score: {score_solution(solution)}")
+
+    gifts=challenge["gifts_list"]
+    map=Map(gifts)
+    zone=Zone(gifts)
+    moyenne=zone.moyenne_points(map,140000,gifts)
+    print(moyenne)
+    cluster=zone.clusterisation(moyenne)
+    pprint(cluster)
+    print("TAILLE DU CLUSTER", len(cluster))
+    solution = solve(challenge)
+    print(f"Score: {score_solution(solution)}")
     santa = Santa(game)
     navigation = Navigation(santa, game)
     game.gifts = sorted(game.gifts, key=lambda gift: gift.ratio)
-    #santa.affichage()
-    #plt.show()
 
     if False:
         x = 0
