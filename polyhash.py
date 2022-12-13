@@ -38,16 +38,18 @@ if __name__ == "__main__":
     # solution = solve(challenge)
     # print(f"Score: {score_solution(solution)}")
 
-    gifts=challenge["gifts_list"]
-    map=Map(gifts)
-    zone=Zone(gifts)
-    moyenne=zone.moyenne_points(map,140000,gifts)
-    print(moyenne)
-    cluster=zone.clusterisation(moyenne)
-    pprint(cluster)
-    print("TAILLE DU CLUSTER", len(cluster))
-    solution = solve(challenge)
-    print(f"Score: {score_solution(solution)}")
+    # gifts = challenge["gifts_list"]
+    # map = Map(gifts)
+    # zone = Zone(game.gifts)
+    # moyenne = zone.moyenne_points(map,140000,gifts)
+    # print(moyenne)
+    # cluster = zone.clusterisation(moyenne)
+    # pprint(cluster)
+    # print("TAILLE DU CLUSTER", len(cluster))
+
+
+    #solution = solve(challenge)
+    #print(f"Score: {score_solution(solution)}")
     santa = Santa(game)
     navigation = Navigation(santa, game)
     game.gifts = sorted(game.gifts, key=lambda gift: gift.ratio)
