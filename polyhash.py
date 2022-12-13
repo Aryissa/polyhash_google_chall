@@ -38,14 +38,12 @@ if __name__ == "__main__":
     # solution = solve(challenge)
     # print(f"Score: {score_solution(solution)}")
 
-    # gifts = challenge["gifts_list"]
-    # map = Map(gifts)
-    # zone = Zone(game.gifts)
-    # moyenne = zone.moyenne_points(map,140000,gifts)
-    # print(moyenne)
-    # cluster = zone.clusterisation(moyenne)
-    # pprint(cluster)
-    # print("TAILLE DU CLUSTER", len(cluster))
+    map = Map(game.gifts)
+    zone = Zone(game.gifts)
+    moyenne = zone.moyenne_points(map,140000,game.gifts)
+    print(moyenne)
+    cluster = zone.clusterisation(moyenne)
+    print("TAILLE DU CLUSTER", len(cluster))
 
 
     #solution = solve(challenge)
