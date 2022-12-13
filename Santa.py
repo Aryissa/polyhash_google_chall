@@ -35,11 +35,11 @@ class Santa:
 
 
     def float(self):
+        self.coordonnée.append((self.x, self.y, self.vx, self.vy))
         self.x += self.vx
         self.y += self.vy
         self.time += 1
         self.nb_float += 1
-        self.coordonnée.append((self.x,self.y,self.x-self.vx, self.y-self.vy))
 
     def accelerate(self, direction: str, value: int):
         if self.nb_carrots == 0:
@@ -129,7 +129,7 @@ class Santa:
         plt.grid(linestyle='--')
 
         for elem in self.coordonnée:
-            plt.quiver(elem[0], elem[1],elem[2], elem[3], angles='xy', scale_units='xy', scale=1)
+            plt.quiver(elem[0], elem[1], elem[2], elem[3], angles='xy', scale_units='xy', scale=0.5)
 
 
 

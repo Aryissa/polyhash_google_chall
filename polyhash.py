@@ -3,6 +3,8 @@
 
 """Module principal pour la mise en oeuvre du projet Poly#.
 """
+import matplotlib.pyplot as plt
+
 from Navigation import Navigation
 from Santa import Santa
 # Vous pouvez structurer votre code en modules pour améliorer la
@@ -35,7 +37,8 @@ if __name__ == "__main__":
     santa = Santa(game)
     navigation = Navigation(santa, game)
     game.gifts = sorted(game.gifts, key=lambda gift: gift.ratio)
-    santa.affichage()
+    #santa.affichage()
+    #plt.show()
 
     if False:
         x = 0
@@ -48,9 +51,13 @@ if __name__ == "__main__":
             navigation.go_point(0, 0)
     else:
         while True:
+
             action = navigation.lines_r_actions(0, 0)
             if santa.time + action['time'] > game.max_time:
                 break
             navigation.lines_r_navigate_x(action)
     santa.print()
     print(f"\nScore : {santa.score}\nTemps : {santa.time}/{game.max_time}")
+
+    santa.affichage()
+    plt.show()
