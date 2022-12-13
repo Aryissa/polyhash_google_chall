@@ -19,6 +19,7 @@ class Santa:
         self.time = 0
         self.nb_float = 0
         self.coordonnée = []
+        self.deposé = []
 
         # mise en place de la fenetre d'affichage
         self.fig, self.ax = plt.subplots()
@@ -82,10 +83,12 @@ class Santa:
         self.add_output(f'LoadGift {gift.name}')
 
     def deliver(self, gift: Gift):
+        self.deposé.append((gift.x, gift.y))
         if get_distance(self.x, self.y, gift.x, gift.y) > self.game.range:
             raise Exception(f'Distance trop grande pour déposer de cadeau {gift.name}')
         self.score += gift.score
         self.weight -= gift.weight
+
         self.gifts.remove(gift)
         self.add_output(f'DeliverGift {gift.name}')
 
@@ -117,7 +120,10 @@ class Santa:
         for gift in self.game.gifts:
             x = gift.x
             y = gift.y
-            circle = plt.Circle((x, y), self.game.range, color='r',fill=False)
+            if self.game.range==0 :
+                circle = plt.Circle((x, y), 1, color='b', fill=False)
+            else:
+                circle = plt.Circle((x, y), self.game.range, color='b',fill=False)
             self.ax.add_artist(circle)
 
         #mise en place du pere noel et de sa taille (le z)
@@ -127,11 +133,14 @@ class Santa:
         ab = AnnotationBbox(imagebox, (0, 0))
         self.ax.add_artist(ab)
         plt.grid(linestyle='--')
-
+        #affichage des vecteurs
         for elem in self.coordonnée:
-            plt.quiver(elem[0], elem[1], elem[2], elem[3], angles='xy', scale_units='xy', scale=0.5)
+            plt.quiver(elem[0], elem[1], elem[2], elem[3], angles='xy', scale_units='xy', scale=0.5, color="r")
 
-
+        #affichage des cadeau pris
+        for elem in self.deposé :
+            circle = plt.Circle((elem[0], elem[1]), self.game.range, color='r', fill=False)
+            self.ax.add_artist(circle)
 
 
 
