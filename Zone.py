@@ -5,6 +5,7 @@ from utils import get_distance
 class Zone:
     def __init__(self, gifts:list):
         self.gifts = gifts
+        self.cluster=[]
         #ratio = 0
         #self.weight = 0
         #for i in gifts:
@@ -49,5 +50,10 @@ class Zone:
                     if (gift_2.x in range(gift_1.x-distance_moyenne,gift_1.x+distance_moyenne) and gift_2.y in range(gift_1.y-distance_moyenne,gift_1.y+distance_moyenne)):
                         list_courante.append(gift_2)
             list_cluster.append(list_courante)
+        self.cluster=list_cluster
         return list_cluster
+
+    #def calcul_score_total_cluster(self,gifts:list):
+
+
 
