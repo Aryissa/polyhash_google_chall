@@ -18,7 +18,9 @@ class Santa:
         self.score = 0
         self.time = 0
         self.nb_float = 0
+        self.coordonnée = []
 
+        # mise en place de la fenetre d'affichage
         self.fig, self.ax = plt.subplots()
         min_max_x = []
         min_max_y = []
@@ -37,7 +39,7 @@ class Santa:
         self.y += self.vy
         self.time += 1
         self.nb_float += 1
-        #self.affichage()
+        self.coordonnée.append((self.x,self.y,self.x-self.vx, self.y-self.vy))
 
     def accelerate(self, direction: str, value: int):
         if self.nb_carrots == 0:
@@ -126,12 +128,10 @@ class Santa:
         self.ax.add_artist(ab)
         plt.grid(linestyle='--')
 
-        x_santa = [0]
-        y_santa = [0]
-        x_santa.append(self.x)
-        y_santa.append(self.y)
-        plt.quiver(x_santa[0], y_santa[0], x_santa[1], y_santa[1], angles='xy', scale_units='xy', scale=1)
-        del(x_santa[0])
-        del(y_santa[0])
+        for elem in self.coordonnée:
+            plt.quiver(elem[0], elem[1],elem[2], elem[3], angles='xy', scale_units='xy', scale=1)
+
+
+
 
 
