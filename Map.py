@@ -2,11 +2,11 @@ import Gift
 from Carre import Carre
 
 class Map:
-    def __init__(self,gifts):
+    def __init__(self,gifts:list):
         self.top,self.bot,self.left,self.right,self.l_x,self.l_y=0,0,0,0,0,0
         for gift in gifts:
-            x=int(gift["x"])
-            y=int(gift["y"])
+            x=gift.x
+            y=gift.y
             if(self.top==0 and self.bot==0 and self.left==0 and self.right==0):
                 self.top,self.bot=y,y
                 self.left,self.right=x,x 
@@ -27,7 +27,7 @@ class Map:
         return True
     
     #pas représente en combien tous les combien on créer un carré
-    def split_in_scale(self,pas):
+    def split_in_scale(self,pas:int):
         list_map=[]
         point_origine_map=(self.left,self.top)
         point_final=(self.left+pas,self.top-pas)
