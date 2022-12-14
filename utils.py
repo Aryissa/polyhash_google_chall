@@ -41,3 +41,11 @@ if __name__ == "__main__":
 
 def get_distance_x_or_y(x1, x2):
     return abs(x1 - x2)
+
+
+def diviseur(nb):
+    res = 1
+    while nb // 10 >= 10:
+        nb //= 10
+        res *= 10
+    return res

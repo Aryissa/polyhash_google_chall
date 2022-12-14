@@ -38,6 +38,7 @@ class Santa:
         plt.xlim(x[0], x[1])
         plt.ylim(y[0], y[1])
         self.ax.set_aspect(1)
+        self.taille_map=abs(x[0])+abs(x[1])
 
 
     def float(self):
