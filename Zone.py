@@ -1,7 +1,6 @@
 from Map import Map
 from Gift import Gift
 from utils import get_distance, diviseur
-from Santa import Santa
 
 class Zone:
     def __init__(self, gifts:list):
@@ -15,7 +14,7 @@ class Zone:
         #self.ratio = ratio / len(gifts)
         #self.initial_gift = max(gifts, key=lambda gift: gift.ratio)
     
-    def moyenne_points(self,map:Map,santa:Santa):
+    def moyenne_points(self,map:Map,santa):
         list_scale=map.split_in_scale(santa.taille_map//10)
         list_moyenne=[]
         for scale in list_scale:
@@ -70,6 +69,3 @@ class Zone:
                 somme_score_cluster=somme_score_cluster+gift.score
             list_score.append(somme_score_cluster)
         return list_score
-            
-
-
