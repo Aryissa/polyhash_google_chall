@@ -38,18 +38,19 @@ if __name__ == "__main__":
     print(game)
     # solution = solve(challenge)
     # print(f"Score: {score_solution(solution)}")
+    santa = Santa(game)
 
     map = Map(game.gifts)
     zone = Zone(game.gifts)
-    moyenne = zone.moyenne_points(map,140000,game.gifts)
-    print(moyenne)
+    moyenne= zone.moyenne_points(map,santa)
+    print("MOYENNE",moyenne)
     cluster = zone.clusterisation(moyenne)
     print("TAILLE DU CLUSTER", len(cluster))
+    print("SCORE CLUSTER", zone.calcul_score_total_cluster())
 
 
     #solution = solve(challenge)
     #print(f"Score: {score_solution(solution)}")
-    santa = Santa(game)
     navigation = Navigation(santa, game)
     game.gifts = sorted(game.gifts, key=lambda gift: gift.ratio)
 
@@ -69,7 +70,7 @@ if __name__ == "__main__":
             santa.deliver(santa.gifts[0])
             navigation.go_point(0, 0)
     else:
-        while True:
+        while False:
             action = navigation.lines_r_actions(0, 0)
             if santa.time + action['time'] > game.max_time:
                 break

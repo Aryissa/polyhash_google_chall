@@ -1,6 +1,7 @@
 from Map import Map
 from Gift import Gift
-from utils import get_distance
+from utils import get_distance, diviseur
+from Santa import Santa
 
 class Zone:
     def __init__(self, gifts:list):
@@ -14,9 +15,8 @@ class Zone:
         #self.ratio = ratio / len(gifts)
         #self.initial_gift = max(gifts, key=lambda gift: gift.ratio)
     
-    def moyenne_points(self,map:Map):
-        diviseur_map=map.l_x-map.l_x%10
-        list_scale=map.split_in_scale(diviseur_map//10)
+    def moyenne_points(self,map:Map,santa:Santa):
+        list_scale=map.split_in_scale(santa.taille_map//10)
         list_moyenne=[]
         for scale in list_scale:
             list_gift=[]
@@ -35,7 +35,7 @@ class Zone:
 
         if(len(list_moyenne)==0):
             return None
-        return int(somme_moyenne/len(list_moyenne))
+        return int(somme_moyenne/len(list_moyenne))+santa.taille_map//(santa.taille_map//diviseur(santa.taille_map))
 
     def clusterisation(self,distance_moyenne):
         list_cluster=[]
@@ -47,7 +47,7 @@ class Zone:
                     list_courante=list_c
                     list_cluster.remove(list_c)
                     break;
-            for gift_2 in self.gifts:
+            for gift_2 in list_gift_restant:
                 if(gift_2 not in list_courante):
                     if (gift_2.x in range(gift_1.x-distance_moyenne,gift_1.x+distance_moyenne) and gift_2.y in range(gift_1.y-distance_moyenne,gift_1.y+distance_moyenne)):
                         list_courante.append(gift_2)
