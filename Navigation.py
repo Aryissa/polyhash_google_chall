@@ -197,6 +197,20 @@ class Navigation:
     def set_vy_to_zero(self):
         self.santa.accelerate("vertical", -self.santa.vy)
 
+    def run_line(self, method=1):
+        if method == 0:
+            while True:
+                action = self.lines_actions(0, 0)
+                if self.santa.time + action['time'] > self.game.max_time:
+                    break
+                self.lines_navigate_x(action)
+        if method == 1:
+            while True:
+                action = self.lines_r_actions(0, 0)
+                if self.santa.time + action['time'] > self.game.max_time:
+                    break
+                self.lines_r_navigate_x(action)
+
     def line(self, x, y):
         lines_x = dict()
         lines_y = dict()
@@ -345,7 +359,7 @@ class Navigation:
             self.santa.load_gift(g)
         self.santa.accelerate('horizontal', a)
         if action['time'] == 1:
-            for gift in gifts_in_range(self.santa.x, self.santa.y, slef.santa.range, self.santa.gifts):
+            for gift in gifts_in_range(self.santa.x, self.santa.y, self.santa.range, self.santa.gifts):
                 self.santa.deliver(gift)
             self.santa.accelerate('horizontal', -a)
             self.santa.accelerate('horizontal', -a)
