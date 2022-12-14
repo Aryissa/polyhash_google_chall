@@ -4,8 +4,11 @@ from Game import Game
 import matplotlib.pyplot as plt
 import matplotlib.image as img
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+from Zone import Zone
+from pprint import pprint
+import random
 class Santa:
-    def __init__(self, game: Game):
+    def __init__(self, game: Game, zone: Zone):
         self.x = 0
         self.y = 0
         self.vx = 0
@@ -13,6 +16,8 @@ class Santa:
         self.nb_carrots = 0
         self.weight = 0
         self.game = game
+        self.zone = zone
+        #self.zone = zone
         self.output = ''
         self.gifts = []
         self.score = 0
@@ -111,12 +116,7 @@ class Santa:
         with open('output.txt', 'w') as outFile:
             outFile.write(final)
         return final
-
-    def affichage(self):
-        #mise en place de la fenetre d'affichage
-
-
-        #affichage des cadeaux
+    def affichage_init(self):
         for gift in self.game.gifts:
             x = gift.x
             y = gift.y
@@ -126,21 +126,46 @@ class Santa:
                 circle = plt.Circle((x, y), self.game.range, color='b',fill=False)
             self.ax.add_artist(circle)
 
-        #mise en place du pere noel et de sa taille (le z)
-        z=0.05
+    def affichage(self):
+        # affichage des cadeaux
+        self.affichage_init()
+        # mise en place du pere noel et de sa taille (le z)
+        z = 0.05
         hamster = img.imread('hamster.png')
         imagebox = OffsetImage(hamster, zoom=z)
         ab = AnnotationBbox(imagebox, (0, 0))
         self.ax.add_artist(ab)
         plt.grid(linestyle='--')
-        #affichage des vecteurs
+        # affichage des vecteurs
         for elem in self.coordonnée:
-            plt.quiver(elem[0], elem[1], elem[2], elem[3], angles='xy', scale_units='xy', scale=0.5, color="r")
+            plt.quiver(elem[0], elem[1], elem[2], elem[3], angles='xy', scale_units='xy', scale=1, color="g",headwidth = 0, )
 
-        #affichage des cadeau pris
-        for elem in self.deposé :
+        # affichage des cadeaux pris
+        for elem in self.deposé:
             circle = plt.Circle((elem[0], elem[1]), self.game.range, color='r', fill=False)
             self.ax.add_artist(circle)
+
+    def affichage_zone(self):
+        # recuperation des données de zone
+        new_cluster = []
+        for gift in self.zone.cluster:
+            color1 = random.randint(5, 255)
+            color2 = random.randint(5, 255)
+            for objet in gift:
+                x = objet.x
+                y = objet.y
+                new_cluster.append((x, y))
+                if self.game.range == 0:
+                    circle = plt.Circle((x, y), 1, color = (1, color1, color2), fill=False)
+                else:
+                    circle = plt.Circle((x, y), self.game.range, color = (1, color1/250, 0), fill=False)
+                self.ax.add_artist(circle)
+
+
+
+
+
+
 
 
 
