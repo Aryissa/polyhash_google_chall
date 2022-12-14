@@ -14,12 +14,13 @@ class Zone:
         #self.ratio = ratio / len(gifts)
         #self.initial_gift = max(gifts, key=lambda gift: gift.ratio)
     
-    def moyenne_points(self,map:Map,diviseur,gifts:list):
-        list_scale=map.split_in_scale(diviseur)
+    def moyenne_points(self,map:Map):
+        diviseur_map=map.l_x-map.l_x%10
+        list_scale=map.split_in_scale(diviseur_map//10)
         list_moyenne=[]
         for scale in list_scale:
             list_gift=[]
-            for gift in gifts:
+            for gift in self.gifts:
                 if scale.in_scale(gift.x,gift.y):
                     list_gift.append(gift)
             for gift_1 in list_gift:
@@ -38,6 +39,7 @@ class Zone:
 
     def clusterisation(self,distance_moyenne):
         list_cluster=[]
+        list_gift_restant=self.gifts
         for gift_1 in self.gifts:
             list_courante=[]
             for list_c in list_cluster:
@@ -50,10 +52,24 @@ class Zone:
                     if (gift_2.x in range(gift_1.x-distance_moyenne,gift_1.x+distance_moyenne) and gift_2.y in range(gift_1.y-distance_moyenne,gift_1.y+distance_moyenne)):
                         list_courante.append(gift_2)
             list_cluster.append(list_courante)
+            list_gift_restant.remove(gift_1)
+        list_cluster_temp=list_cluster
+        for list_c1 in list_cluster:
+            for list_c2 in list_cluster:
+                if (list_c1[0] in list_c2 and list_c1!=list_c2):
+                    list_cluster_temp.remove(list_c2)
+        list_cluster=list_cluster_temp
         self.cluster=list_cluster
         return list_cluster
 
-    #def calcul_score_total_cluster(self,gifts:list):
-
+    def calcul_score_total_cluster(self):
+        list_score=[]
+        for cluster in self.cluster:
+            somme_score_cluster=0
+            for gift in cluster:
+                somme_score_cluster=somme_score_cluster+gift.score
+            list_score.append(somme_score_cluster)
+        return list_score
+            
 
 
