@@ -212,10 +212,11 @@ class Navigation:
                 self.lines_r_navigate_x(action)
         if method == 2:
             while True:
-                action = self.lines_rs_actions(0, 0)
+                action = self.lines_rs_actions_2(0, 0)
                 if self.santa.time + action['time'] > self.game.max_time:
                     break
                 self.lines_rs_navigate_x(action)
+                break
 
     def line(self, x, y):
         lines_x = dict()
@@ -317,9 +318,10 @@ class Navigation:
                     v.append(gift)
                 if y + gift.y + self.game.range >= y_res >= y + gift.y - self.game.range:
                     h.append(gift)
+            h = sorted(h, key=lambda g: g.x, reverse=a < 0)
+            v = sorted(v, key=lambda g: g.x, reverse=a < 0)
             lines_x[vector] = h
             lines_y[vector] = v
-
         return lines_x, lines_y
 
     def lines_r_actions(self, x, y):
@@ -393,7 +395,7 @@ class Navigation:
         actions = []
         for vector, gifts in v_x.items():
             i = 0
-            weight = 5
+            weight = 0
             action = dict()
             action['vector'] = vector
             action['gifts'] = []
@@ -444,6 +446,70 @@ class Navigation:
             actions.append(action)
         return max(actions, key=lambda a: a['score'] / a['time'])
 
+    def lines_rs_actions_2(self, x, y):
+        v_x, v_y = self.line_r(x, y)
+        actions = []
+        for vector, gifts in v_x.items():
+            action = dict()
+            action['vector'] = vector
+            action['gifts'] = []
+            action['score'] = 0
+            action['time'] = 1
+            nb_carrots = 0
+            weight = 0
+            last_x = 0
+            distri_gifts = []
+            for gift in gifts:
+                weight += gift.weight
+                if self.max_speed(weight) < max([abs(vector[0]), abs(vector[1])]):
+                    break
+                last_x = gift.x
+                distri_gifts.append(gift)
+            print(vector, len(distri_gifts), weight)
+            weight = 0
+            vx = vy = 0
+            nx, ny = x, y
+            second = True
+            i = 0
+            while len(distri_gifts) != len(action['gifts']):
+                available_gifts = gifts_in_range(nx, ny, self.game.range, gifts)
+                print(len(available_gifts))
+                available_gifts.sort(key=lambda g: g.score)
+                end = False
+                for gift in available_gifts:
+                    if gift in action['gifts']:
+                        continue
+                    weight += gift.weight
+                    if self.max_speed(weight + nb_carrots) < max([abs(vector[0]), abs(vector[1])]) or self.max_speed(
+                            weight + nb_carrots) < abs(vector[1]):
+                        end = True
+                        weight -= gift.weight
+                        break
+                    action['gifts'].append(gift)
+                    action['score'] += gift.score
+                if end:
+                    break
+                if i % 2:
+                    if vx <= self.game.range:
+                        vx += vector[0] if nx < (x + last_x) // 2 else -vector[0]
+                        nb_carrots += 1
+                else:
+                    if vy <= self.game.range:
+                        vy += vector[1] if nx < (x + last_x) // 2 else -vector[1]
+                        nb_carrots += + 1
+                if second:
+                    i += 1
+                second = not second
+                action['time'] += 1
+                nx += vx
+                ny += vy
+                print(nx, ny, len(distri_gifts), len(action['gifts']))
+            ratio_s = self.max_speed(0) / max([abs(vector[0]), abs(vector[1])])
+            action['time'] += action['time'] // ratio_s
+            action['carrots'] = nb_carrots
+            actions.append(action)
+        return max(actions, key=lambda a: a['score'] / a['time'])
+
     def lines_rs_navigate_x(self, action):
         print(action['vector'])
         print(action['time'], len(action['gifts']), action['carrots'], action['score'])
@@ -457,10 +523,8 @@ class Navigation:
         second = False
         nb = 0
         for i in range(action['carrots']):
-            s = 1
-            if i < (action['carrots'] // 4) * 3:
-                s = -1
-            if i < action['carrots'] // 4:
+            s = -1
+            if i < action['carrots'] // 2:
                 s = 1
             second = not second
             if nb % 2 == 0:
@@ -471,10 +535,7 @@ class Navigation:
                 nb += 1
             for gift in gifts_in_range(self.santa.x, self.santa.y, self.game.range, self.santa.gifts):
                 self.santa.deliver(gift)
-            #print(f"{i}/{action['carrots']}", s, self.santa.x, self.santa.y, self.santa.vx, self.santa.vy)
-        for gift in self.santa.gifts:
-            self.santa.gifts.remove(gift)
-            self.game.gifts.append(gift)
+
         print(len(self.santa.gifts))
 
     def max_speed(self, weight):
