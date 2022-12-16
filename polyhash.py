@@ -38,10 +38,9 @@ if __name__ == "__main__":
     print(game)
     # solution = solve(challenge)
     # print(f"Score: {score_solution(solution)}")
-    santa = Santa(game)
-
     map = Map(game.gifts)
     zone = Zone(game.gifts)
+    santa = Santa(game,zone)
     moyenne= zone.moyenne_points(map,santa)
     print("MOYENNE",moyenne)
     cluster = zone.clusterisation(moyenne)
@@ -78,5 +77,5 @@ if __name__ == "__main__":
     santa.print()
     print(f"\nScore : {santa.score}\nTemps : {santa.time}/{game.max_time}")
 
-    santa.affichage()
+    santa.affichage_zone()
     plt.show()

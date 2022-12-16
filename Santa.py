@@ -157,7 +157,7 @@ class Santa:
                 y = objet.y
                 new_cluster.append((x, y))
                 if self.game.range == 0:
-                    circle = plt.Circle((x, y), 1, color = (1, color1, color2), fill=False)
+                    circle = plt.Circle((x, y), 1, color = (1, color1/255, color2/255), fill=False)
                 else:
                     circle = plt.Circle((x, y), self.game.range, color = (1, color1/250, 0), fill=False)
                 self.ax.add_artist(circle)
