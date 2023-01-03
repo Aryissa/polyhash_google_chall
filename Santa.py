@@ -34,8 +34,9 @@ class Santa:
         plt.ylim(y[0], y[1])
         self.ax.set_aspect(1)
 
-
     def float(self):
+        if self.vx == 0 and self.vy == 0:
+            return
         self.coordonnée.append((self.x, self.y, self.vx, self.vy))
         self.x += self.vx
         self.y += self.vy
