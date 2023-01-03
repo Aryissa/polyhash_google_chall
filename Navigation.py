@@ -500,7 +500,7 @@ class Navigation:
                         action['score'] += gift.score
                     if end:
                         break
-                    if i % 2:
+                    if i % 2 == 0:
                         vx += vector[0] * m
                     else:
                         vy += vector[1] * m
@@ -511,11 +511,6 @@ class Navigation:
                     action['time'] += 1
                     nx += vx
                     ny += vy
-                    #if vector == (-3, 3):
-                    #    plt.scatter([nx], [ny], color='green')
-            #if vector == (-3, 3):
-            #    plt.scatter([0], [0], color='pink')
-            #    plt.show()
             action['time'] += action['time'] * 2
             action['carrots'] = nb_carrots * 4
             while self.max_speed(weight + action['carrots']) < max([abs(vector[0]), abs(vector[1])]):
@@ -524,16 +519,16 @@ class Navigation:
         return max(actions, key=lambda a: a['score'] / a['time'])
 
     def lines_rs_navigate_x(self, action):
-        print('\nNOUVEAU TRAJET')
-        print(action['vector'])
-        print(f'Poids du Papa : {self.santa.weight}')
-        print(action['time'], len(action['gifts']), action['carrots'], action['score'])
+        # print('\nNOUVEAU TRAJET')
+        # print(action['vector'])
+        # print(f'Poids du Papa : {self.santa.weight}')
+        # print(f"time:{action['time']} nbgifts:{len(action['gifts'])} carrots:{action['carrots']} score:{action['score']}")
         a, b = action['vector']
         self.santa.load_carrot(action['carrots'] - self.santa.nb_carrots if action['carrots'] >= self.santa.nb_carrots else 0)
         for g in action['gifts']:
             self.game.gifts.remove(g)
             self.santa.load_gift(g)
-        print(f'Poids du Papa : {self.santa.weight}')
+        #print(f'Poids du Papa : {self.santa.weight}')
         for m in [1, -1, -1, 1]:
             second = True
             nb = 0
@@ -549,13 +544,13 @@ class Navigation:
                 if second:
                     nb += 1
                 second = not second
-
+                #print(f"{self.santa.x} {self.santa.y}")
         for gift in self.santa.gifts:
             plt.scatter([gift.x], [gift.y], color='red')
 
-        print('Coordonnées :', self.santa.x, self.santa.y)
-        print(len(self.santa.gifts), self.santa.score, len(action['gifts']), self.santa.nb_carrots)
-        plt.show()
+        #print('Coordonnées :', self.santa.x, self.santa.y)
+        #print(len(self.santa.gifts), self.santa.score, len(action['gifts']), self.santa.nb_carrots)
+        #plt.show()
 
     def max_speed(self, weight):
         for k, v in self.game.acceleration_ranges.items():
