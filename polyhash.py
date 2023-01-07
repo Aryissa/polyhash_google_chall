@@ -70,7 +70,7 @@ if __name__ == "__main__":
             navigation.go_point(0, 0)
     else:
         print("Stratégie par ligne droite")
-        navigation.run_line(2)
+        navigation.run_line(3)
     santa.print()
     print(f"\nScore : {santa.score}\nTemps : {santa.time}/{game.max_time}")
 
