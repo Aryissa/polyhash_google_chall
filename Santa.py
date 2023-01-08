@@ -4,6 +4,8 @@ from Game import Game
 import matplotlib.pyplot as plt
 import matplotlib.image as img
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+
+
 class Santa:
     def __init__(self, game: Game):
         self.x = 0
@@ -35,8 +37,8 @@ class Santa:
         self.ax.set_aspect(1)
 
     def float(self):
-        if self.vx == 0 and self.vy == 0:
-            return
+        # if self.vx == 0 and self.vy == 0:
+        #     return
         self.coordonnée.append((self.x, self.y, self.vx, self.vy))
         self.x += self.vx
         self.y += self.vy
@@ -48,7 +50,7 @@ class Santa:
             raise Exception('PLUS DE CARROTES !!!')
         speed = self.max_speed()
         if abs(value) > speed:
-            raise Exception('Changement de vitesse trop importante')
+            raise Exception(f'Changement de vitesse trop importante. Changement de vitesse : {value}, max speed : {speed}')
         if direction == 'vertical':
             self.vy += value
             if value > 0:
@@ -67,7 +69,7 @@ class Santa:
 
     def load_carrot(self, nb: int):
         if get_distance(self.x, self.y, 0, 0) > self.game.range:
-            raise Exception('Distance trop grande pour le ramassage de carrotes')
+            raise Exception(f'Distance trop grande pour le ramassage de carrotes {self.x, self.y}')
         self.nb_carrots += nb
         self.weight += nb
         self.add_output(f'LoadCarrots {nb}')
