@@ -36,7 +36,8 @@ if __name__ == "__main__":
     print("=============")
     print(f"Challenge {args.challenge}\n")
     print(game)
-    # solution = solve(challenge)
+    solve(challenge)
+    exit()
     # print(f"Score: {score_solution(solution)}")
 
     """map = Map(game.gifts)
@@ -70,7 +71,7 @@ if __name__ == "__main__":
             navigation.go_point(0, 0)
     else:
         print("Stratégie par ligne droite")
-        navigation.run_line(3)
+        navigation.run_line(2)
     santa.print()
     print(f"\nScore : {santa.score}\nTemps : {santa.time}/{game.max_time}")
 
