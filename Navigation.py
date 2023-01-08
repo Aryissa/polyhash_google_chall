@@ -3,7 +3,7 @@ import Gift
 import Santa
 from utils import get_distance_x_or_y, enumerate_vectors, enumerate_cases_in_range, gift_here, gifts_in_range
 import matplotlib.pyplot as plt
-
+from pprint import pprint
 
 class Navigation:
 
@@ -213,22 +213,48 @@ class Navigation:
                 self.lines_r_navigate_x(action)
         if method == 2:
             while True:
-                action = self.lines_rs_actions_2(0, 0)
-                if self.santa.time + action['time'] > self.game.max_time:
+                actions = self.lines_rs_actions_2(0, 0)
+
+                action = None
+                #pprint(actions)
+                for a in actions:
+                    if self.santa.time + a['time'] <= self.game.max_time:
+                        action = a
+                        break
+
+                if not action:
+                    print("Pas de temps de trajets assez petits")
                     break
+
+                # On regarde si on peut faire un petit trajet juste avant le dernier
+                action2 = None
+                if self.santa.time + (action['time'] * 2) > self.game.max_time:
+                    for a in actions:
+                        if self.santa.time + action['time'] + (a['time']*2) <= self.game.max_time:
+                            action2 = a
+                            break
+                if action2:
+                    action = action2
+
                 self.lines_rs_navigate_x(action)
-        if method == 3:
-            while True:
-                action1 = self.lines_rs_actions_2(0, 0)
-                action2 = self.lines_r_actions(0, 0)
-                if action1['score'] / action1['time'] >= action2['score'] / action2['time']:
-                    if self.santa.time + action1['time'] > self.game.max_time:
-                        break
-                    self.lines_rs_navigate_x(action1)
-                else:
-                    if self.santa.time + action2['time'] > self.game.max_time:
-                        break
-                    self.lines_r_navigate_x(action2)
+
+                if self.santa.time + action['time'] > self.game.max_time:
+                    print(f"Pas assez de temps pour le retour ({action['time']})")
+                    break
+                self.lines_rs_return_x(action['vector'], action['nb_accel'])
+
+        #if method == 3:
+        #    while True:
+        #        action1 = self.lines_rs_actions_2(0, 0)
+        #        action2 = self.lines_r_actions(0, 0)
+        #        if action1['score'] / action1['time'] >= action2['score'] / action2['time']:
+        #            if self.santa.time + action1['time'] > self.game.max_time:
+        #                break
+        #            self.lines_rs_navigate_x(action1)
+        #        else:
+        #            if self.santa.time + action2['time'] > self.game.max_time:
+        #                break
+        #            self.lines_r_navigate_x(action2)
 
     def line(self, x, y, max_speed=4):
         lines_x = dict()
@@ -481,14 +507,15 @@ class Navigation:
         return counter
 
     def lines_rs_actions_2(self, x, y):
-        v_x, v_y = self.line_r(x, y)
+        max_speed = max(self.game.acceleration_ranges.values())
+        v_x, v_y = self.line_r(x, y, max_speed=max_speed)
         actions = []
         for vector, gifts in v_x.items():
             action = dict()
             action['vector'] = vector
             action['gifts'] = []
             action['score'] = 0
-            action['time'] = 1
+            action['time'] = 0
             nb_carrots = 0
             weight = 0
             nb_accel = self.find_nb_accel(x, y, vector, gifts) + 1
@@ -524,13 +551,16 @@ class Navigation:
                     action['time'] += 1
                     nx += vx
                     ny += vy
-                    nb_carrots += 1
-            action['time'] += action['time'] * 2
-            action['carrots'] = action['nb_accel']*4 #(nb_carrots * 4)
+                    nb_carrots += 2
+            action['time'] += action['nb_accel'] * 2  # action['time'] * 2
+            action['carrots'] = action['nb_accel'] * 4
             while self.max_speed(weight + action['carrots']) < max([abs(vector[0]), abs(vector[1])]):
                 weight -= action['gifts'].pop().weight
-            actions.append(action)
-        return max(actions, key=lambda a: a['score'] / a['time'])
+
+            if len(action['gifts']) != 0:
+                actions.append(action)
+        actions.sort(key=lambda a: a['score'] / a['time'], reverse=True)
+        return actions
 
     def lines_rs_navigate_x(self, action):
         #print('\nNOUVEAU TRAJET')
@@ -541,14 +571,14 @@ class Navigation:
         for g in action['gifts']:
             self.game.gifts.remove(g)
             self.santa.load_gift(g)
-        for m in [1, -1, -1, 1]:
+        for m in [1, -1]:
             second = True
             nb = 0
             for _ in range(action['nb_accel']):
+                #print(self.santa.x, self.santa.y)
                 plt.scatter([self.santa.x], [self.santa.y], color='blue')
                 for gift in gifts_in_range(self.santa.x, self.santa.y, self.game.range, self.santa.gifts):
                     self.santa.deliver(gift)
-                    plt.scatter([gift.x], [gift.y], color='yellow')
                 if nb % 2 == 0:
                     self.santa.accelerate('horizontal', m * a)
                 else:
@@ -556,11 +586,23 @@ class Navigation:
                 if second:
                     nb += 1
                 second = not second
-                #print(f"{self.santa.x} {self.santa.y}")
-        for gift in self.santa.gifts:
-            plt.scatter([gift.x], [gift.y], color='red')
 
-        #print(f"Score : {self.santa.score}")
+    def lines_rs_return_x(self, vector, nb_accel):
+        a, b = vector
+        for m in [-1, 1]:
+            second = True
+            nb = 0
+            for _ in range(nb_accel):
+                plt.scatter([self.santa.x], [self.santa.y], color='yellow')
+                #print(self.santa.x, self.santa.y)
+                if nb % 2 == 0:
+                    self.santa.accelerate('horizontal', m * a)
+                else:
+                    self.santa.accelerate('vertical', m * b)
+                if second:
+                    nb += 1
+                second = not second
+        #plt.show()
 
     def max_speed(self, weight):
         for k, v in self.game.acceleration_ranges.items():
