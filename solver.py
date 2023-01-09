@@ -22,7 +22,7 @@ def solve(challenge):
             best_santa = santa
 
     print(f"\nScore : {best_santa.score}\nTemps : {best_santa.time}")
-    santa.print()
+    return best_santa
 
 
 def no_move(game, santa):

@@ -36,9 +36,7 @@ if __name__ == "__main__":
     print("=============")
     print(f"Challenge {args.challenge}\n")
     print(game)
-    solve(challenge)
-    exit()
-    # print(f"Score: {score_solution(solution)}")
+
 
     """map = Map(game.gifts)
     zone = Zone(game.gifts)
@@ -47,31 +45,8 @@ if __name__ == "__main__":
     cluster = zone.clusterisation(moyenne)
     print("TAILLE DU CLUSTER", len(cluster))"""
 
+    santa = solve(challenge)
 
-    #solution = solve(challenge)
-    #print(f"Score: {score_solution(solution)}")
-    santa = Santa(game)
-    navigation = Navigation(santa, game)
-    game.gifts = sorted(game.gifts, key=lambda gift: gift.ratio)
-
-    for gift in utils.gifts_in_range(0, 0, game.range, game.gifts):
-        santa.load_gift(gift)
-        game.gifts.remove(gift)
-        santa.deliver(gift)
-    print(f'Score obtenu en ne bougeant pas : {santa.score}')
-
-    if False:
-        x = 0
-        while santa.time < game.max_time:
-            santa.load_gift(game.gifts[x])
-            x += 1
-            santa.load_carrot(10)
-            navigation.go_point(santa.gifts[0].x, santa.gifts[0].y)
-            santa.deliver(santa.gifts[0])
-            navigation.go_point(0, 0)
-    else:
-        print("Stratégie par ligne droite")
-        navigation.run_line(2)
     santa.print()
     print(f"\nScore : {santa.score}\nTemps : {santa.time}/{game.max_time}")
 
