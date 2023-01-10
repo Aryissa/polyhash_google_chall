@@ -1,9 +1,8 @@
 import Game
 import Gift
 import Santa
-from utils import get_distance_x_or_y, enumerate_vectors, enumerate_cases_in_range, gift_here, gifts_in_range
-import matplotlib.pyplot as plt
-from pprint import pprint
+from utils import get_distance_x_or_y, enumerate_vectors, gift_here, gifts_in_range
+
 
 class Navigation:
 
@@ -575,8 +574,6 @@ class Navigation:
             second = True
             nb = 0
             for _ in range(action['nb_accel']):
-                #print(self.santa.x, self.santa.y)
-                plt.scatter([self.santa.x], [self.santa.y], color='blue')
                 for gift in gifts_in_range(self.santa.x, self.santa.y, self.game.range, self.santa.gifts):
                     self.santa.deliver(gift)
                 if nb % 2 == 0:
@@ -593,8 +590,6 @@ class Navigation:
             second = True
             nb = 0
             for _ in range(nb_accel):
-                plt.scatter([self.santa.x], [self.santa.y], color='yellow')
-                #print(self.santa.x, self.santa.y)
                 if nb % 2 == 0:
                     self.santa.accelerate('horizontal', m * a)
                 else:
@@ -602,7 +597,6 @@ class Navigation:
                 if second:
                     nb += 1
                 second = not second
-        #plt.show()
 
     def max_speed(self, weight):
         for k, v in self.game.acceleration_ranges.items():
