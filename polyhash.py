@@ -49,8 +49,12 @@ if __name__ == "__main__":
     # print("TAILLE DU CLUSTER", len(cluster))
     # print("SCORE CLUSTER", zone.calcul_score_total_cluster())
 
-
     santa = solve(challenge)
+
+    santa.affichage()
+    plt.show()
+
+    exit()
 
     for gift in utils.gifts_in_range(0, 0, game.range, game.gifts):
         santa.load_gift(gift)
@@ -76,5 +80,3 @@ if __name__ == "__main__":
     santa.print()
     print(f"\nScore : {santa.score}\nTemps : {santa.time}/{game.max_time}")
 
-    santa.affichage()
-    plt.show()

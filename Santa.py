@@ -10,7 +10,7 @@ import random
 
 
 class Santa:
-    def __init__(self, game: Game, zone: Zone):
+    def __init__(self, game: Game, zone: Zone = None):
         self.x = 0
         self.y = 0
         self.vx = 0
@@ -24,8 +24,8 @@ class Santa:
         self.score = 0
         self.time = 0
         self.nb_float = 0
-        self.coordonnée = []
-        self.deposé = []
+        self.coordinates = []
+        self.delivered = []
 
         # mise en place de la fenetre d'affichage
         self.fig, self.ax = plt.subplots()
@@ -42,7 +42,7 @@ class Santa:
         self.taille_map=abs(x[0])+abs(x[1])
 
     def float(self):
-        self.coordonnée.append((self.x, self.y, self.vx, self.vy))
+        self.coordinates.append((self.x, self.y, self.vx, self.vy))
         self.x += self.vx
         self.y += self.vy
         self.time += 1
@@ -85,7 +85,7 @@ class Santa:
         self.add_output(f'LoadGift {gift.name}')
 
     def deliver(self, gift: Gift):
-        self.deposé.append((gift.x, gift.y))
+        self.delivered.append((gift.x, gift.y))
         if get_distance(self.x, self.y, gift.x, gift.y) > self.game.range:
             raise Exception(f'Distance trop grande pour déposer de cadeau {gift.name}')
         self.score += gift.score
@@ -135,11 +135,11 @@ class Santa:
         self.ax.add_artist(ab)
         plt.grid(linestyle='--')
         # affichage des vecteurs
-        for elem in self.coordonnée:
+        for elem in self.coordinates:
             plt.quiver(elem[0], elem[1], elem[2], elem[3], angles='xy', scale_units='xy', scale=1, color="g",headwidth = 0, )
 
         # affichage des cadeaux pris
-        for elem in self.deposé:
+        for elem in self.delivered:
             circle = plt.Circle((elem[0], elem[1]), self.game.range, color='r', fill=False)
             self.ax.add_artist(circle)
 
