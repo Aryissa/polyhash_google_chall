@@ -1,7 +1,7 @@
 import Game
 import Gift
 import Santa
-from utils import get_distance_x_or_y, enumerate_vectors, enumerate_cases_in_range, gift_here, gifts_in_range
+from utils import get_distance_x_or_y, enumerate_vectors, gift_here, gifts_in_range
 
 
 class Navigation:
@@ -197,10 +197,68 @@ class Navigation:
     def set_vy_to_zero(self):
         self.santa.accelerate("vertical", -self.santa.vy)
 
-    def line(self, x, y):
+    def run_line(self, method=1):
+        if method == 0:
+            while True:
+                action = self.lines_actions(0, 0)
+                if self.santa.time + action['time'] > self.game.max_time:
+                    break
+                self.lines_navigate_x(action)
+        if method == 1:
+            while True:
+                action = self.lines_r_actions(0, 0)
+                if self.santa.time + action['time'] > self.game.max_time:
+                    break
+                self.lines_r_navigate_x(action)
+        if method == 2:
+            while True:
+                actions = self.lines_rs_actions_2(0, 0)
+
+                action = None
+                #pprint(actions)
+                for a in actions:
+                    if self.santa.time + a['time'] <= self.game.max_time:
+                        action = a
+                        break
+
+                if not action:
+                    print("Pas de temps de trajets assez petits")
+                    break
+
+                # On regarde si on peut faire un petit trajet juste avant le dernier
+                action2 = None
+                if self.santa.time + (action['time'] * 2) > self.game.max_time:
+                    for a in actions:
+                        if self.santa.time + action['time'] + (a['time']*2) <= self.game.max_time:
+                            action2 = a
+                            break
+                if action2:
+                    action = action2
+
+                self.lines_rs_navigate_x(action)
+
+                if self.santa.time + action['time'] > self.game.max_time:
+                    print(f"Pas assez de temps pour le retour ({action['time']})")
+                    break
+                self.lines_rs_return_x(action['vector'], action['nb_accel'])
+
+        #if method == 3:
+        #    while True:
+        #        action1 = self.lines_rs_actions_2(0, 0)
+        #        action2 = self.lines_r_actions(0, 0)
+        #        if action1['score'] / action1['time'] >= action2['score'] / action2['time']:
+        #            if self.santa.time + action1['time'] > self.game.max_time:
+        #                break
+        #            self.lines_rs_navigate_x(action1)
+        #        else:
+        #            if self.santa.time + action2['time'] > self.game.max_time:
+        #                break
+        #            self.lines_r_navigate_x(action2)
+
+    def line(self, x, y, max_speed=4):
         lines_x = dict()
         lines_y = dict()
-        for vector in enumerate_vectors(4):
+        for vector in enumerate_vectors(max_speed):
             h = []
             v = []
             a, b = vector
@@ -279,10 +337,10 @@ class Navigation:
         self.santa.load_carrot(1)
         self.santa.accelerate('horizontal', a)
 
-    def line_r(self, x, y):
+    def line_r(self, x, y, max_speed=4):
         lines_x = dict()
         lines_y = dict()
-        for vector in enumerate_vectors(4):
+        for vector in enumerate_vectors(max_speed):
             h = []
             v = []
             a, b = vector
@@ -297,9 +355,10 @@ class Navigation:
                     v.append(gift)
                 if y + gift.y + self.game.range >= y_res >= y + gift.y - self.game.range:
                     h.append(gift)
+            h = sorted(h, key=lambda g: g.x, reverse=a < 0)
+            v = sorted(v, key=lambda g: g.x, reverse=a < 0)
             lines_x[vector] = h
             lines_y[vector] = v
-
         return lines_x, lines_y
 
     def lines_r_actions(self, x, y):
@@ -339,13 +398,15 @@ class Navigation:
     def lines_r_navigate_x(self, action):
         y_depart = self.santa.y
         a, b = action['vector']
-        self.santa.load_carrot(7)
+        #self.santa.load_carrot(7)
+        #print(f"nb carrots : {self.santa.nb_carrots}")
+        self.santa.load_carrot(7 - self.santa.nb_carrots if 7 >= self.santa.nb_carrots else 0)
         for g in action['gifts']:
             self.game.gifts.remove(g)
             self.santa.load_gift(g)
         self.santa.accelerate('horizontal', a)
         if action['time'] == 1:
-            for gift in gifts_in_range(self.santa.x, self.santa.y, slef.santa.range, self.santa.gifts):
+            for gift in gifts_in_range(self.santa.x, self.santa.y, self.santa.range, self.santa.gifts):
                 self.santa.deliver(gift)
             self.santa.accelerate('horizontal', -a)
             self.santa.accelerate('horizontal', -a)
@@ -367,6 +428,175 @@ class Navigation:
         self.santa.accelerate('vertical', b)
         self.santa.load_carrot(1)
         self.santa.accelerate('horizontal', a)
+
+    def lines_rs_actions(self, x, y):
+        max_speed = max(self.game.acceleration_ranges.values())
+        v_x, v_y = self.line_r(x, y, max_speed=max_speed)
+        actions = []
+        for vector, gifts in v_x.items():
+            i = 0
+            weight = 0
+            action = dict()
+            action['vector'] = vector
+            action['gifts'] = []
+            action['score'] = 0
+            action['time'] = 1
+            nb_carrots = 0
+            max_x = max(self.game.gifts, key=lambda g: g.x).x
+            min_x = min(self.game.gifts, key=lambda g: g.x).x
+            vx = vy = 0
+            nx, ny = x, y
+            second = True
+            while len(gifts) != len(action['gifts']) and min_x < nx < max_x:
+                #available_gifts = gifts_in_range(x + vector[0] * (i + 1), y + vector[1] * i, self.game.range, gifts)
+                available_gifts = gifts_in_range(nx, ny, self.game.range, gifts)
+                available_gifts.sort(key=lambda g: g.score)
+                end = False
+                for gift in available_gifts:
+                    if gift in action['gifts']:
+                        continue
+                    weight += gift.weight
+                    if self.max_speed(weight + nb_carrots) < abs(vector[0]) or self.max_speed(weight + nb_carrots) < abs(vector[1]):
+                        end = True
+                        weight -= gift.weight
+                        break
+                    action['gifts'].append(gift)
+                    action['score'] += gift.score
+                if end:
+                    break
+                action['time'] += 1
+                if i % 2:
+                    if vx <= self.game.range:
+                        vx += vector[0]
+                        nb_carrots += 4
+                else:
+                    if vy <= self.game.range:
+                        vy += vector[1]
+                        nb_carrots += + 4
+                if second:
+                    i += 1
+                second = not second
+                nx += vx
+                ny += vy
+            action['time'] = action['time'] * 4
+            action['carrots'] = nb_carrots
+            while self.max_speed(weight + nb_carrots) < max([abs(vector[0]), abs(vector[1])]):
+                weight -= action['gifts'].pop().weight
+            #print(vector, weight, + nb_carrots, self.max_speed(weight + nb_carrots), max([abs(vector[0]), abs(vector[1])]))
+            actions.append(action)
+        return max(actions, key=lambda a: a['score'] / a['time'])
+
+    def find_nb_accel(self, x, y, vector, gifts):
+        weight = 0
+        last_x = 0
+        a, b = vector
+        for gift in gifts:
+            weight += gift.weight
+            if self.max_speed(weight) < max([abs(a), abs(b)]):
+                break
+            last_x = gift.x
+        dx_b = 0
+        vx = 0
+        counter = 0
+        last_x = abs(x - last_x)
+        while abs(dx_b) * 2 < last_x:
+            counter += 1
+            vx += a
+            dx_b += vx
+        return counter
+
+    def lines_rs_actions_2(self, x, y):
+        max_speed = max(self.game.acceleration_ranges.values())
+        v_x, v_y = self.line_r(x, y, max_speed=max_speed)
+        actions = []
+        for vector, gifts in v_x.items():
+            action = dict()
+            action['vector'] = vector
+            action['gifts'] = []
+            action['score'] = 0
+            action['time'] = 0
+            nb_carrots = 0
+            weight = 0
+            nb_accel = self.find_nb_accel(x, y, vector, gifts) + 1
+            action['nb_accel'] = nb_accel
+            vx = vy = 0
+            nx, ny = x, y
+            for m in [1, -1]:
+                second = True
+                i = 0
+                for _ in range(nb_accel):
+                    available_gifts = gifts_in_range(nx, ny, self.game.range, gifts)
+                    available_gifts.sort(key=lambda g: g.score)
+                    end = False
+                    for gift in available_gifts:
+                        if gift in action['gifts']:
+                            continue
+                        weight += gift.weight
+                        if self.max_speed(weight + nb_carrots) < max([abs(vector[0]), abs(vector[1])]) or self.max_speed(weight + nb_carrots) < abs(vector[1]):
+                            end = True
+                            weight -= gift.weight
+                            break
+                        action['gifts'].append(gift)
+                        action['score'] += gift.score
+                    if end:
+                        break
+                    if i % 2 == 0:
+                        vx += vector[0] * m
+                    else:
+                        vy += vector[1] * m
+                    if second:
+                        i += 1
+                    second = not second
+                    action['time'] += 1
+                    nx += vx
+                    ny += vy
+                    nb_carrots += 2
+            action['time'] += action['nb_accel'] * 2  # action['time'] * 2
+            action['carrots'] = action['nb_accel'] * 4
+            while self.max_speed(weight + action['carrots']) < max([abs(vector[0]), abs(vector[1])]):
+                weight -= action['gifts'].pop().weight
+
+            if len(action['gifts']) != 0:
+                actions.append(action)
+        actions.sort(key=lambda a: a['score'] / a['time'], reverse=True)
+        return actions
+
+    def lines_rs_navigate_x(self, action):
+        #print('\nNOUVEAU TRAJET')
+        #print(action['vector'])
+        #print(f"time:{action['time']} nbgifts:{len(action['gifts'])} carrots:{action['carrots']} score:{action['score']}")
+        a, b = action['vector']
+        self.santa.load_carrot(action['carrots'] - self.santa.nb_carrots if action['carrots'] >= self.santa.nb_carrots else 0)
+        for g in action['gifts']:
+            self.game.gifts.remove(g)
+            self.santa.load_gift(g)
+        for m in [1, -1]:
+            second = True
+            nb = 0
+            for _ in range(action['nb_accel']):
+                for gift in gifts_in_range(self.santa.x, self.santa.y, self.game.range, self.santa.gifts):
+                    self.santa.deliver(gift)
+                if nb % 2 == 0:
+                    self.santa.accelerate('horizontal', m * a)
+                else:
+                    self.santa.accelerate('vertical', m * b)
+                if second:
+                    nb += 1
+                second = not second
+
+    def lines_rs_return_x(self, vector, nb_accel):
+        a, b = vector
+        for m in [-1, 1]:
+            second = True
+            nb = 0
+            for _ in range(nb_accel):
+                if nb % 2 == 0:
+                    self.santa.accelerate('horizontal', m * a)
+                else:
+                    self.santa.accelerate('vertical', m * b)
+                if second:
+                    nb += 1
+                second = not second
 
     def max_speed(self, weight):
         for k, v in self.game.acceleration_ranges.items():

@@ -36,8 +36,6 @@ if __name__ == "__main__":
     print("=============")
     print(f"Challenge {args.challenge}\n")
     print(game)
-    # solution = solve(challenge)
-    # print(f"Score: {score_solution(solution)}")
 
 
     map = Map(game.gifts)
@@ -52,10 +50,7 @@ if __name__ == "__main__":
     # print("SCORE CLUSTER", zone.calcul_score_total_cluster())
 
 
-    #solution = solve(challenge)
-    #print(f"Score: {score_solution(solution)}")
-    navigation = Navigation(santa, game)
-    game.gifts = sorted(game.gifts, key=lambda gift: gift.ratio)
+    santa = solve(challenge)
 
     for gift in utils.gifts_in_range(0, 0, game.range, game.gifts):
         santa.load_gift(gift)

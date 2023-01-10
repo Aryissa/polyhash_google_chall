@@ -7,6 +7,8 @@ from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from Zone import Zone
 from pprint import pprint
 import random
+
+
 class Santa:
     def __init__(self, game: Game, zone: Zone):
         self.x = 0
@@ -17,7 +19,6 @@ class Santa:
         self.weight = 0
         self.game = game
         self.zone = zone
-        #self.zone = zone
         self.output = ''
         self.gifts = []
         self.score = 0
@@ -40,7 +41,6 @@ class Santa:
         self.ax.set_aspect(1)
         self.taille_map=abs(x[0])+abs(x[1])
 
-
     def float(self):
         self.coordonnée.append((self.x, self.y, self.vx, self.vy))
         self.x += self.vx
@@ -53,30 +53,26 @@ class Santa:
             raise Exception('PLUS DE CARROTES !!!')
         speed = self.max_speed()
         if abs(value) > speed:
-            raise Exception('Changement de vitesse trop importante')
+            raise Exception(f'Changement de vitesse trop importante. Changement de vitesse : {value}, max speed : {speed}')
         if direction == 'vertical':
             self.vy += value
             if value > 0:
                 self.add_output(f'AccUp {value}')
             else:
                 self.add_output(f'AccDown {-value}')
-            if self.vy > speed:
-                self.vy = speed
         else:
             self.vx += value
             if value > 0:
                 self.add_output(f'AccRight {value}')
             else:
                 self.add_output(f'AccLeft {-value}')
-            if self.vx > speed:
-                self.vx = speed
         self.nb_carrots -= 1
         self.weight -= 1
         self.float()
 
     def load_carrot(self, nb: int):
         if get_distance(self.x, self.y, 0, 0) > self.game.range:
-            raise Exception('Distance trop grande pour le ramassage de carrotes')
+            raise Exception(f'Distance trop grande pour le ramassage de carrotes {self.x, self.y}')
         self.nb_carrots += nb
         self.weight += nb
         self.add_output(f'LoadCarrots {nb}')
@@ -100,7 +96,7 @@ class Santa:
 
     def max_speed(self):
         for k, v in self.game.acceleration_ranges.items():
-            if k > self.weight:
+            if k >= self.weight:
                 return v
         return 0
 
@@ -117,6 +113,7 @@ class Santa:
         with open('output.txt', 'w') as outFile:
             outFile.write(final)
         return final
+
     def affichage_init(self):
         for gift in self.game.gifts:
             x = gift.x
@@ -161,12 +158,3 @@ class Santa:
                 else:
                     circle = plt.Circle((x, y), self.game.range, color = (1, color1/250, 0), fill=False)
                 self.ax.add_artist(circle)
-
-
-
-
-
-
-
-
-

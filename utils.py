@@ -11,7 +11,7 @@ def enumerate_vectors(max_speed: int):
     vectors = []
     for i in range(-max_speed, max_speed + 1):
         for j in range(-max_speed, max_speed + 1):
-            if j != 0 and i != 0:
+            if j != 0 or i != 0:
                 vectors.append((i, j))
     return vectors
 
