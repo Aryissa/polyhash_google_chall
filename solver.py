@@ -15,8 +15,7 @@ def solve(challenge):
 
     score = -1
     best_santa = None
-    for santa in [
-                  go_point_strat(challenge)]:
+    for santa in [go_47_78(challenge)]:
         if santa.score > score:
             score = santa.score
             best_santa = santa
@@ -75,4 +74,18 @@ def go_point_strat(challenge):
         if santa.x == santa.gifts[0].x and santa.y == santa.gifts[0].y:
             santa.deliver(santa.gifts[0])
             navigation.go_point(0, 0)
+    return santa
+
+
+def go_47_78(challenge):
+    game = Game(challenge)
+    game.gifts = sorted(game.gifts, key=lambda gift: gift.ratio, reverse=True)
+    santa = Santa(game)
+    santa.load_carrot(1999)
+    navigation = Navigation(santa, game)
+    no_move(game, santa)
+    navigation.go_approximatif(60000, 60000)
+    print(santa.x, santa.y)
+    navigation.go_point(60000, 60000)
+    print(santa.x, santa.y)
     return santa
