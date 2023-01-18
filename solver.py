@@ -71,8 +71,8 @@ def go_point_strat(challenge):
         santa.load_gift(game.gifts[x])
         x += 1
         santa.load_carrot(13)
-        navigation.go_point(santa.gifts[0].x, santa.gifts[0].y)
+        navigation.go_point_slow(santa.gifts[0].x, santa.gifts[0].y)
         if santa.x == santa.gifts[0].x and santa.y == santa.gifts[0].y:
             santa.deliver(santa.gifts[0])
-            navigation.go_point(0, 0)
+            navigation.go_point_slow(0, 0)
     return santa

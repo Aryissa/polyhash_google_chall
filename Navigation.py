@@ -5,28 +5,48 @@ from utils import get_distance_x_or_y, enumerate_vectors, gift_here, gifts_in_ra
 
 
 class Navigation:
+    """
+    Classe Navigation
+    Comprend les différents déplacements pouvant être effectués par le père Noël
+    """
 
     def __init__(self, santa: Santa, game: Game):
         self.santa = santa
         self.game = game
 
-    def go_point(self, x, y):
+    """
+    Dirige le père Noël vers un point précis à vitesse lente
+    (Généralement utilisé pour aller à un point proche)
+    """
+    def go_point_slow(self, x, y):
+
+        # Si la coordonnée en x est bonne, mais que le père Noël possède une accélération
         if x == self.santa.x and self.santa.vx != 0:
             self.set_vx_to_zero()
+        # Si la coordonnée en y est bonne, mais que le père Noël possède une accélération
         if y == self.santa.y and self.santa.vy != 0:
             self.set_vy_to_zero()
+        # Si la coordonnée en x est supérieure à la position du père Noël et la vitesse
+        # inférieure à 0, remise à zéro de la vitesse
         if x > self.santa.x:
             if self.santa.vx < 0:
                 self.set_vx_to_zero()
+        # Si la coordonnée en x est inférieure à la position du père Noël et la vitesse
+        # supérieure à 0, remise à zéro de la vitesse
         else:
             if self.santa.vx > 0:
                 self.set_vx_to_zero()
+        # Si la coordonnée en y est supérieure à la position du père Noël et la vitesse
+        # inférieure à 0, remise à zéro de la vitesse
         if y > self.santa.y:
             if self.santa.vy < 0:
                 self.set_vy_to_zero()
+        # Si la coordonnée en y est inférieure à la position du père Noël et la vitesse
+        # supérieure à 0, remise à zéro de la vitesse
         else:
             if self.santa.vy > 0:
                 self.set_vy_to_zero()
+
         # Quand le point est proche de la position de départ
         if get_distance_x_or_y(self.santa.x, x) <= self.santa.max_acceleration() and get_distance_x_or_y(self.santa.y, y) <= self.santa.max_acceleration():
             # Pour x
@@ -44,18 +64,12 @@ class Navigation:
             # Se rend sur le point quand il est négatif par rapport à santa
             else:
                 self.santa.accelerate("vertical", -self.santa.vy - get_distance_x_or_y(self.santa.y, y))
-        # Quand le point est loin de la coordonée x de départ, vitesse max en x
+
+        # Quand le point est loin de la coordonnée x de départ, vitesse max en x
         if get_distance_x_or_y(self.santa.x, x) >= self.santa.max_acceleration():
             # Coordonnée positive par rapport à santa
             if x > self.santa.x:
-                # Vérifier si y est proche
-                if get_distance_x_or_y(self.santa.y, y) <= self.santa.max_acceleration() and y != self.santa.y:
-                    self.y_is_close(y)
-                    self.set_vy_to_zero()
-                # Vérifie si x s'est rapproché suffisamment avec les deux float de la vérification précédente
-                if get_distance_x_or_y(self.santa.x, x) <= self.santa.max_acceleration() and x != self.santa.x:
-                    self.x_is_close(x)
-                    self.set_vx_to_zero()
+                self.y_close_then_x_close(x, y)
                 # Vérifie si la vitesse actuelle n'est pas = à la vitesse max et si x et y ne sont pas égaux à santa
                 if self.santa.vx != self.santa.max_acceleration() and (x != self.santa.x):
                     # Vérifie si la vitesse est déjà positive, sinon il faut passer par zéro
@@ -64,32 +78,19 @@ class Navigation:
                     self.santa.accelerate("horizontal", -self.santa.vx + self.santa.max_acceleration())
             # Coordonnée négative par rapport à santa
             else:
-                # Vérifier si y est proche
-                if get_distance_x_or_y(self.santa.y, y) <= self.santa.max_acceleration() and y != self.santa.y:
-                    self.y_is_close(y)
-                    self.set_vy_to_zero()
-                # Vérifie si x s'est rapproché suffisamment avec les deux float de la vérification précédente
-                if get_distance_x_or_y(self.santa.x, x) <= self.santa.max_acceleration() and x != self.santa.x:
-                    self.x_is_close(x)
-                    self.set_vx_to_zero()
+                self.y_close_then_x_close(x, y)
                 # Vérifie si la vitesse actuelle n'est pas = à la vitesse max et si x et y ne sont pas égaux à santa
                 if self.santa.vx != -self.santa.max_acceleration() and (x != self.santa.x):
                     # Vérifie si la vitesse est déjà négative, sinon il faut passer par zéro
                     if self.santa.vx > 0:
                         self.set_vx_to_zero()
                     self.santa.accelerate("horizontal", -self.santa.vx - self.santa.max_acceleration())
+
         # Quand le point est loin de la coordonée y de départ, vitesse max en y
         if get_distance_x_or_y(self.santa.y, y) >= self.santa.max_acceleration():
             # Coordonnée positive par rapport à santa
             if y > self.santa.y:
-                # Vérifier si x est proche
-                if get_distance_x_or_y(self.santa.x, x) <= self.santa.max_acceleration() and x != self.santa.x:
-                    self.x_is_close(x)
-                    self.set_vx_to_zero()
-                # Vérifie si y s'est rapproché suffisamment avec les deux float de la vérification précédente
-                if get_distance_x_or_y(self.santa.y, y) < self.santa.max_acceleration() and y != self.santa.y:
-                    self.y_is_close(y)
-                    self.set_vy_to_zero()
+                self.x_close_then_y_close(x, y)
                 # Vérifie si la vitesse actuelle n'est pas = à la vitesse max et si x et y ne sont pas égaux à santa
                 if self.santa.vy != self.santa.max_acceleration() and (y != self.santa.y):
                     # Vérifie si la vitesse est déjà positive, sinon il faut passer par zéro
@@ -98,24 +99,20 @@ class Navigation:
                     self.santa.accelerate("vertical", -self.santa.vy + self.santa.max_acceleration())
             # Coordonnée négative par rapport à santa
             else:
-                # Vérifier si x est proche
-                if get_distance_x_or_y(self.santa.x, x) <= self.santa.max_acceleration() and x != self.santa.x:
-                    self.x_is_close(x)
-                    self.set_vx_to_zero()
-                # Vérifie si y s'est rapproché suffisamment avec les deux float de la vérification précédente
-                if get_distance_x_or_y(self.santa.y, y) < self.santa.max_acceleration() and y != self.santa.y:
-                    self.y_is_close(y)
-                    self.set_vy_to_zero()
+                self.x_close_then_y_close(x, y)
                 # Vérifie si la vitesse actuelle n'est pas = à la vitesse max et si x et y ne sont pas égaux à santa
                 if self.santa.vy != -self.santa.max_acceleration() and (y != self.santa.y):
                     # Vérifie si la vitesse est déjà négative, sinon il faut passer par zéro
                     if self.santa.vy > 0:
                         self.set_vy_to_zero()
                     self.santa.accelerate("vertical", -self.santa.vy - self.santa.max_acceleration())
+
         # Tant qu'on n'est pas arrivé au point voulu
         while x != self.santa.x or y != self.santa.y:
+
             if self.santa.time >= self.game.max_time:
                 return False
+
             # Vérifie si x et y sont tous les deux proches du point voulu
             if get_distance_x_or_y(self.santa.x, x) <= self.santa.max_acceleration()*2 and get_distance_x_or_y(self.santa.y, y) <= self.santa.max_acceleration()*2 and x != self.santa.x and y != self.santa.y:
                 # Au moins une des deux distances est impaire :
@@ -131,7 +128,7 @@ class Navigation:
                                 self.santa.accelerate("horizontal", -self.santa.max_acceleration())
                         if self.santa.x != x:
                             self.x_is_close(x)
-                    else: # faire un else if > et un else =
+                    else:
                         self.set_vy_to_zero()
                         self.x_is_close(x)
                         self.set_vx_to_zero()
@@ -157,11 +154,13 @@ class Navigation:
                             self.santa.accelerate("vertical", -self.santa.vy - get_distance_x_or_y(self.santa.y, y) // 2)
                         if get_distance_x_or_y(self.santa.x, x) <= self.santa.max_acceleration():
                             self.x_is_close(x)
+
             # Vérifie si x est proche du point voulu
             if get_distance_x_or_y(self.santa.x, x) <= self.santa.max_acceleration() and x != self.santa.x:
                 self.x_is_close(x)
                 if y != self.santa.y:
                     self.set_vx_to_zero()
+
             # Vérifie si y est proche du point voulu
             if get_distance_x_or_y(self.santa.y, y) <= self.santa.max_acceleration() and y != self.santa.y:
                 self.y_is_close(y)
@@ -169,10 +168,43 @@ class Navigation:
                     self.set_vy_to_zero()
                     if get_distance_x_or_y(self.santa.x, x) <= self.santa.max_acceleration() and x != self.santa.x:
                         self.x_is_close(x)
+
             if x != self.santa.x or y != self.santa.y:
                 self.santa.float()
+
         return True
 
+    """"
+    Vérifie si la coordonnée en y est proche, va sur le point puis met la vitesse à zéro, puis vérifie si x est
+    devenu proche avec ces deux actions
+    """
+    def y_close_then_x_close(self, x, y):
+        # Vérifier si y est proche
+        if get_distance_x_or_y(self.santa.y, y) <= self.santa.max_acceleration() and y != self.santa.y:
+            self.y_is_close(y)
+            self.set_vy_to_zero()
+        # Vérifie si x s'est rapproché suffisamment avec les deux float de la vérification précédente
+        if get_distance_x_or_y(self.santa.x, x) <= self.santa.max_acceleration() and x != self.santa.x:
+            self.x_is_close(x)
+            self.set_vx_to_zero()
+
+    """"
+    Vérifie si la coordonnée en y est proche, va sur le point puis met la vitesse à zéro, puis vérifie si x est
+    devenu proche avec ces deux actions
+    """
+    def x_close_then_y_close(self, x, y):
+        # Vérifier si x est proche
+        if get_distance_x_or_y(self.santa.x, x) <= self.santa.max_acceleration() and x != self.santa.x:
+            self.x_is_close(x)
+            self.set_vx_to_zero()
+        # Vérifie si y s'est rapproché suffisamment avec les deux float de la vérification précédente
+        if get_distance_x_or_y(self.santa.y, y) < self.santa.max_acceleration() and y != self.santa.y:
+            self.y_is_close(y)
+            self.set_vy_to_zero()
+
+    """"
+    Vérifie si la coordonnée en y est proche, va sur le point puis ne met pas la vitesse à zéro
+    """
     def y_is_close(self, y):
         if y > self.santa.y:
             if self.santa.vy < 0:
@@ -182,6 +214,9 @@ class Navigation:
                 self.set_vy_to_zero()
         self.santa.accelerate("vertical", -self.santa.vy + y - self.santa.y)
 
+    """"
+    Vérifie si la coordonnée en x est proche, va sur le point puis ne met pas la vitesse à zéro
+    """
     def x_is_close(self, x):
         if x > self.santa.x:
             if self.santa.vx < 0:
@@ -191,9 +226,15 @@ class Navigation:
                 self.set_vx_to_zero()
         self.santa.accelerate("horizontal", -self.santa.vx + x - self.santa.x)
 
+    """"
+    Met la vitesse horizontale à zéro
+    """
     def set_vx_to_zero(self):
         self.santa.accelerate("horizontal", -self.santa.vx)
 
+    """"
+    Met la vitesse verticale à zéro
+    """
     def set_vy_to_zero(self):
         self.santa.accelerate("vertical", -self.santa.vy)
 
