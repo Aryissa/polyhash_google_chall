@@ -1,5 +1,12 @@
 from Gift import Gift
+
+
 class Game:
+    """
+    Classe Jeu
+    Initialise la partie
+    """
+
     def __init__(self, challenge):
         self.max_time = int(challenge['time'])
         self.current_time = 0
@@ -27,4 +34,3 @@ class Game:
         score_max = sum([g.score for g in self.gifts])
         s += f'Score max : {score_max}\n'
         return s
-

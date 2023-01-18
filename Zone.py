@@ -1,8 +1,12 @@
 from Map import Map
-from Gift import Gift
 from utils import get_distance, diviseur
 
 class Zone:
+    """
+    Classe Zone
+    Une zone contient une liste de cadeaux
+    """
+
     def __init__(self, gifts:list):
         self.gifts = gifts
         self.cluster=[]
@@ -13,7 +17,10 @@ class Zone:
             #self.weight = self.weight+i.weight
         #self.ratio = ratio / len(gifts)
         #self.initial_gift = max(gifts, key=lambda gift: gift.ratio)
-    
+
+    """
+    Calcule la moyenne de distance des points sur toute la map
+    """
     def moyenne_points(self,map:Map,santa):
         list_scale=map.split_in_scale(santa.taille_map//10)
         list_moyenne=[]
@@ -36,6 +43,9 @@ class Zone:
             return None
         return int(somme_moyenne/len(list_moyenne))+santa.taille_map//(santa.taille_map//diviseur(santa.taille_map))
 
+    """
+    Création des clusters
+    """
     def clusterisation(self,distance_moyenne):
         list_cluster=[]
         list_gift_restant=self.gifts
@@ -61,6 +71,9 @@ class Zone:
         self.cluster=list_cluster
         return list_cluster
 
+    """
+    Calcule le score total d'un cluster
+    """
     def calcul_score_total_cluster(self):
         list_score=[]
         for cluster in self.cluster:

@@ -1,4 +1,8 @@
 class Gift:
+    """
+    Classe Cadeau
+    """
+
     def __init__(self, name, weight, x, y, score, ratio):
         self.name = name
         self.weight = weight
