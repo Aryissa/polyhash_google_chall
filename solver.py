@@ -13,10 +13,10 @@ def solve(challenge):
     """Résout un challenge donné.
     """
 
-    score = 0
+    score = -1
     best_santa = None
-    for santa in [line_strat(challenge),
-                  line_strat_full_speed(challenge)]:
+    for santa in [
+                  go_point_strat(challenge)]:
         if santa.score > score:
             score = santa.score
             best_santa = santa
@@ -57,4 +57,22 @@ def line_strat_full_speed(challenge):
     navigation = Navigation(santa, game)
 
     navigation.run_line(2)
+    return santa
+
+
+def go_point_strat(challenge):
+    game = Game(challenge)
+    game.gifts = sorted(game.gifts, key=lambda gift: gift.ratio, reverse=True)
+    santa = Santa(game)
+    navigation = Navigation(santa, game)
+    no_move(game, santa)
+    x = 0
+    while santa.time < game.max_time:
+        santa.load_gift(game.gifts[x])
+        x += 1
+        santa.load_carrot(13)
+        navigation.go_point(santa.gifts[0].x, santa.gifts[0].y)
+        if santa.x == santa.gifts[0].x and santa.y == santa.gifts[0].y:
+            santa.deliver(santa.gifts[0])
+            navigation.go_point(0, 0)
     return santa
