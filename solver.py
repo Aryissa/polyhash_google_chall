@@ -3,6 +3,7 @@
 
 """Module de résolution du projet Poly#.
 """
+import matplotlib.pyplot as plt
 
 import utils
 from Game import Game
@@ -15,7 +16,7 @@ def solve(challenge):
 
     score = -1
     best_santa = None
-    for santa in [go_47_78(challenge)]:
+    for santa in [go_one_gift_fast(challenge)]:
         if santa.score > score:
             score = santa.score
             best_santa = santa
@@ -77,15 +78,26 @@ def go_point_strat(challenge):
     return santa
 
 
-def go_47_78(challenge):
+def go_one_gift_fast(challenge):
     game = Game(challenge)
-    game.gifts = sorted(game.gifts, key=lambda gift: gift.ratio, reverse=True)
     santa = Santa(game)
-    santa.load_carrot(1999)
     navigation = Navigation(santa, game)
+
     no_move(game, santa)
-    navigation.go_approximatif(60000, 60000)
+
+    game.gifts = sorted(game.gifts, key=lambda gift: gift.score)
+    THE_GIFT = game.gifts.pop()
+    print(THE_GIFT.x, THE_GIFT.y)
+
+    santa.load_gift(THE_GIFT)
+    santa.load_carrot(1999 - THE_GIFT.weight)
+
+    navigation.go_approximatif(THE_GIFT.x, THE_GIFT.y)
     print(santa.x, santa.y)
-    navigation.go_point(60000, 60000)
+    navigation.go_approximatif(THE_GIFT.x, THE_GIFT.y)
+    navigation.go_point(THE_GIFT.x, THE_GIFT.y)
+
     print(santa.x, santa.y)
+    santa.deliver(THE_GIFT)
+    #plt.show()
     return santa
