@@ -615,36 +615,51 @@ class Navigation:
 
     def get_closest_vector(self, xa, xb, x, y):
         a, b = (x - xa, y - xb)
-        count = 0
-        coef = a / b
-        while max([abs(a), abs(b)]) > self.max_speed(self.santa.weight):
-            a -= a / abs(a)
-            b -= (b / abs(b)) * coef
-            count += 1
-        vector = (ceil(a), ceil(b))
-        return vector
+        sa = a / abs(a) if a else 0  # Signe de b
+        sb = b / abs(b) if b else 0  # Signe de b
+
+        max_s = self.santa.max_speed()
+
+        # Si a est au-dessus de la v-max
+        if abs(a) > max_s:
+            b -= abs(a - max_s) * abs(b / a) * sb  # on soustrait à b proportionnellement à ce que l'on va enlever à a
+            a = max_s * sa  # on met a à la vitesse max de son signe
+
+        # Si b est au-dessus de la v-max
+        if abs(b) > max_s:
+            a -= abs(b - max_s) * abs(a / b) * sa  # on soustrait à a proportionnellement à ce que l'on va enlever à b
+            b = max_s * sb  # on met b à la vitesse max de son signe
+        return ceil(a), ceil(b)
 
     def find_nb_accel_approximatif(self, x, y, vector):
         a, b = vector
+        counter = 0
+
         temp_x = 0
         vx = 0
-        counter = 0
         x = abs(self.santa.x - x)
-        while abs(temp_x) * 2 < x:  # On prend en compte l'accélération et la deceleration (x2)
+
+        if a == 0:
+            a = b
+            x = abs(self.santa.y - y)
+
+        while a != 0 and abs(temp_x) < x:
             counter += 1
             vx += a
             temp_x += vx
         return counter
 
     def go_approximatif(self, x, y):
+        # Meilleur vecteur pour aller au plus proche sans être au-dessus de la v-max
         a, b = self.get_closest_vector(self.santa.x, self.santa.y, x, y)
+        # Nombre de carottes / acceleration que l'on utilisera pour y aller
         it = self.find_nb_accel_approximatif(x, y, (a, b))
 
         for m in [1, -1]:
             second = True
             nb = 0
             for _ in range(it):
-                print(self.santa.x, self.santa.y)
+                #plt.scatter(self.santa.x, self.santa.y)
                 if nb % 2 == 0:
                     self.santa.accelerate('horizontal', m * a)
                 else:
