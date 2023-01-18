@@ -2,6 +2,8 @@ import Game
 import Gift
 import Santa
 from utils import get_distance_x_or_y, enumerate_vectors, gift_here, gifts_in_range
+from math import ceil
+import matplotlib.pyplot as plt
 
 
 class Navigation:
@@ -610,3 +612,43 @@ class Navigation:
             # TODO
             return 0
         return carrots
+
+    def get_closest_vector(self, xa, xb, x, y):
+        a, b = (x - xa, y - xb)
+        count = 0
+        coef = a / b
+        while max([abs(a), abs(b)]) > self.max_speed(self.santa.weight):
+            a -= a / abs(a)
+            b -= (b / abs(b)) * coef
+            count += 1
+        vector = (ceil(a), ceil(b))
+        return vector
+
+    def find_nb_accel_approximatif(self, x, y, vector):
+        a, b = vector
+        temp_x = 0
+        vx = 0
+        counter = 0
+        x = abs(self.santa.x - x)
+        while abs(temp_x) * 2 < x:  # On prend en compte l'accélération et la deceleration (x2)
+            counter += 1
+            vx += a
+            temp_x += vx
+        return counter
+
+    def go_approximatif(self, x, y):
+        a, b = self.get_closest_vector(self.santa.x, self.santa.y, x, y)
+        it = self.find_nb_accel_approximatif(x, y, (a, b))
+
+        for m in [1, -1]:
+            second = True
+            nb = 0
+            for _ in range(it):
+                print(self.santa.x, self.santa.y)
+                if nb % 2 == 0:
+                    self.santa.accelerate('horizontal', m * a)
+                else:
+                    self.santa.accelerate('vertical', m * b)
+                if second:
+                    nb += 1
+                second = not second
