@@ -52,6 +52,7 @@ if __name__ == "__main__":
     santa = solve(challenge)
 
     santa.affichage()
+    santa.print()
     plt.show()
 
     exit()
