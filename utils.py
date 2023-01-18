@@ -56,4 +56,3 @@ def gift_plus_proche(cluster,santa_x,santa_y):
         if get_distance(gift_proche.x,gift_proche.y,santa_x,santa_y)>get_distance(gift.x,gift.y,santa_x,santa_y):
             gift_proche=gift
     return gift_proche
-                
