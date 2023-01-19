@@ -87,17 +87,14 @@ def go_one_gift_fast(challenge):
 
     game.gifts = sorted(game.gifts, key=lambda gift: gift.score)
     THE_GIFT = game.gifts.pop()
-    print(THE_GIFT.x, THE_GIFT.y)
 
     santa.load_gift(THE_GIFT)
-    santa.load_carrot(1999 - THE_GIFT.weight)
+    santa.load_carrot(14 - THE_GIFT.weight)
 
-    navigation.go_approximatif(THE_GIFT.x, THE_GIFT.y)
-    print(santa.x, santa.y)
-    navigation.go_approximatif(THE_GIFT.x, THE_GIFT.y)
+    while utils.get_distance(santa.x, santa.y, THE_GIFT.x, THE_GIFT.y) > game.range * 2:
+        navigation.go_approximatif(THE_GIFT.x, THE_GIFT.y)
     navigation.go_point(THE_GIFT.x, THE_GIFT.y)
 
-    print(santa.x, santa.y)
     santa.deliver(THE_GIFT)
     #plt.show()
     return santa
