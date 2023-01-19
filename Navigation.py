@@ -2,7 +2,7 @@ import Game
 import Gift
 import Santa
 from utils import get_distance_x_or_y, enumerate_vectors, gift_here, gifts_in_range
-from math import ceil
+from math import ceil, floor
 import matplotlib.pyplot as plt
 
 
@@ -633,37 +633,109 @@ class Navigation:
 
     def find_nb_accel_approximatif(self, x, y, vector):
         a, b = vector
-        counter = 0
 
+        counter = 0
         temp_x = 0
         vx = 0
-        x = abs(self.santa.x - x)
 
-        if a == 0:
-            a = b
-            x = abs(self.santa.y - y)
+        if a != 0:
+            acceleration = a
+            dest = abs(self.santa.x - x)
+        else:
+            acceleration = b
+            dest = abs(self.santa.y - y)
 
-        while a != 0 and abs(temp_x) < x:
+        while acceleration != 0 and abs(temp_x) < dest:
             counter += 1
-            vx += a
+            vx += acceleration
             temp_x += vx
+
+        # Si on va dans une seule direction et qu'on n'alterne pas, on va plus vite
+        if 0 in [a, b]:
+            counter = floor(counter * 0.75)
+        print(temp_x)
         return counter
 
+    def find_nb_accel_approximatif_2(self, xa, ya, xb, yb):
+        # Meilleur vecteur pour aller au plus proche sans être au-dessus de la v-max
+        a, b = self.get_closest_vector(xa, ya, xb, yb)
+        # Nombre de carottes / acceleration que l'on utilisera pour y aller
+
+        # On regarde si une direction est à 0
+        one_way = False
+        way = 0
+        if a == 0:
+            way = 1
+            one_way = True
+        if b == 0:
+            way = 0
+            one_way = True
+
+        second = True
+        nb = 0 if not one_way else way  # On n'alterne pas si on va dans une seule direction
+
+        # Initialisation coordonnée et vitesse de base
+        x, y = xa, ya
+        vx = vy = 0
+
+        counter = 0
+
+        # Tant que l'on n'a pas dépassé l'objectif
+        while not (xa < xb < x or x < xb < xa or ya < yb < y or y < yb < ya):
+            if nb % 2 == 0:
+                vx += a
+            else:
+                vy += b
+            x += vx * 2
+            y += vy * 2
+
+            # On alterne toutes les 2 fois
+            if second:
+                if not one_way:  # Seulement si on va dans les 2 directions
+                    nb += 1
+            second = not second
+            counter += 1
+        return counter, x, y
+
+
+    """ On va vers un point, approximativement et le plus vite possible
+    """
     def go_approximatif(self, x, y):
         # Meilleur vecteur pour aller au plus proche sans être au-dessus de la v-max
         a, b = self.get_closest_vector(self.santa.x, self.santa.y, x, y)
         # Nombre de carottes / acceleration que l'on utilisera pour y aller
-        it = self.find_nb_accel_approximatif(x, y, (a, b))
+        ##it = self.find_nb_accel_approximatif(x, y, (a, b))
+        it, x, y = self.find_nb_accel_approximatif_2(self.santa.x, self.santa.y, x, y)
+
+        # On regarde si une direction est à 0
+        one_way = False
+        way = 0
+        if a == 0:
+            way = 1
+            one_way = True
+        if b == 0:
+            way = 0
+            one_way = True
 
         for m in [1, -1]:
             second = True
-            nb = 0
+            nb = 0 if not one_way else way  # On n'alterne pas si on va dans une seule direction
+
             for _ in range(it):
-                #plt.scatter(self.santa.x, self.santa.y)
                 if nb % 2 == 0:
                     self.santa.accelerate('horizontal', m * a)
                 else:
                     self.santa.accelerate('vertical', m * b)
+
+                # On alterne toutes les 2 fois
                 if second:
-                    nb += 1
+                    if not one_way:  # Seulement si on va dans les 2 directions
+                        nb += 1
                 second = not second
+        print(self.santa.x, self.santa.y)
+
+    def predict_approx_carrots(self, x, y):
+        # Meilleur vecteur pour aller au plus proche sans être au-dessus de la v-max
+        a, b = self.get_closest_vector(self.santa.x, self.santa.y, x, y)
+        # Nombre de carottes / acceleration que l'on utilisera pour y aller (x2 pour la deceleration)
+        return self.find_nb_accel_approximatif(x, y, (a, b)) * 2
