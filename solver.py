@@ -21,7 +21,7 @@ def solve(challenge):
             score = santa.score
             best_santa = santa
 
-    print(f"\nScore : {best_santa.score}\nTemps : {best_santa.time}")
+    #print(f"\nScore : {best_santa.score}\nTemps : {best_santa.time}")
     return best_santa
 
 
@@ -89,12 +89,14 @@ def go_one_gift_fast(challenge):
     THE_GIFT = game.gifts.pop()
 
     santa.load_gift(THE_GIFT)
-    santa.load_carrot(14 - THE_GIFT.weight)
+    santa.load_carrot(1999 - THE_GIFT.weight)
 
-    while utils.get_distance(santa.x, santa.y, THE_GIFT.x, THE_GIFT.y) > game.range * 2:
-        navigation.go_approximatif(THE_GIFT.x, THE_GIFT.y)
-    navigation.go_point(THE_GIFT.x, THE_GIFT.y)
+    predict = navigation.predict_carrots_go(THE_GIFT.x, THE_GIFT.y)
+    print(predict)
+
+    navigation.go(THE_GIFT.x, THE_GIFT.y)
+
+    print(1999 - santa.nb_carrots - THE_GIFT.weight)
 
     santa.deliver(THE_GIFT)
-    #plt.show()
     return santa
