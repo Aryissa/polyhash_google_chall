@@ -750,7 +750,7 @@ class Navigation:
             it = self.go_approximatif(x, y)
             if not it:
                 break
-        self.go_point(x, y)
+        self.go_point_slow(x, y)
 
     def predict_carrots_go(self, x, y):
         total = 0
