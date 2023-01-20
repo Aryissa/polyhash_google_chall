@@ -652,7 +652,7 @@ class Navigation:
         sa = a / abs(a) if a else 0  # Signe de a, en évitant la division par 0
         sb = b / abs(b) if b else 0  # Signe de b, en évitant la division par 0
 
-        max_s = self.santa.max_speed()
+        max_s = self.santa.max_acceleration()
 
         # Si a est au-dessus de la v-max
         if abs(a) > max_s:

@@ -16,7 +16,12 @@ def solve(challenge):
 
     score = -1
     best_santa = None
-    for santa in [go_one_gift_fast(challenge)]:
+    for santa in [
+        #go_one_gift_fast(challenge),
+        line_strat(challenge),
+        go_point_strat(challenge),
+        line_strat_full_speed(challenge)
+    ]:
         if santa.score > score:
             score = santa.score
             best_santa = santa

@@ -8,6 +8,7 @@ def get_distance(x1, y1, x2, y2):
 
 
 def enumerate_vectors(max_speed: int):
+    max_speed %= 10
     vectors = []
     for i in range(-max_speed, max_speed + 1):
         for j in range(-max_speed, max_speed + 1):
