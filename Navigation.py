@@ -661,7 +661,6 @@ class Navigation:
                 vx += a
             else:
                 vy += b
-
             # A chaque tour (qui sera float), on avance de la vitesse
             # x2 car on compte le retour (exactement meme sequence)
             x += vx * 2
@@ -679,6 +678,7 @@ class Navigation:
     def go_approximatif(self, x, y):
         """ On va vers un point, approximativement et le plus vite possible
         """
+        print(self.santa.nb_carrots)
         # Meilleur vecteur pour aller au plus proche sans être au-dessus de la v-max
         a, b = self.get_closest_vector(self.santa.x, self.santa.y, x, y)
         # Nombre de carottes / acceleration que l'on utilisera pour y aller
@@ -709,12 +709,13 @@ class Navigation:
                     if not one_way:  # Seulement si on va dans les 2 directions
                         nb += 1
                 second = not second
-
-        print(self.santa.x, self.santa.y, dx, dy)
+        return it
 
     def go(self, x, y):
         while get_distance(self.santa.x, self.santa.y, x, y) > self.game.range * 2:
-            self.go_approximatif(x, y)
+            it = self.go_approximatif(x, y)
+            if not it:
+                break
         self.go_point(x, y)
 
     def predict_carrots_go(self, x, y):
@@ -723,6 +724,8 @@ class Navigation:
         cx, cy = self.santa.x, self.santa.y
         while get_distance(cx, cy, x, y) > self.game.range * 2:
             it, cx, cy = self.find_nb_accel_approximatif(cx, cy, x, y)
+            if not it:
+                break
             total += it * 2
 
         return total
