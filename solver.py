@@ -17,7 +17,7 @@ def solve(challenge):
     score = -1
     best_santa = None
     for santa in [
-        #go_one_gift_fast(challenge),
+        go_one_gift_fast(challenge),
         line_strat(challenge),
         go_point_strat(challenge),
         line_strat_full_speed(challenge)
@@ -94,14 +94,12 @@ def go_one_gift_fast(challenge):
     THE_GIFT = game.gifts.pop()
 
     santa.load_gift(THE_GIFT)
-    santa.load_carrot(1999 - THE_GIFT.weight)
+
 
     predict = navigation.predict_carrots_go(THE_GIFT.x, THE_GIFT.y)
-    print(predict)
+    santa.load_carrot(predict * 2 + 10)
 
     navigation.go(THE_GIFT.x, THE_GIFT.y)
-
-    print(1999 - santa.nb_carrots - THE_GIFT.weight)
 
     santa.deliver(THE_GIFT)
     return santa
