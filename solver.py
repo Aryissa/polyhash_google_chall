@@ -26,7 +26,6 @@ def solve(challenge):
             score = santa.score
             best_santa = santa
 
-    #print(f"\nScore : {best_santa.score}\nTemps : {best_santa.time}")
     return best_santa
 
 
@@ -43,6 +42,9 @@ def line_strat(challenge):
     game = Game(challenge)
     santa = Santa(game)
 
+    if len(game.acceleration_ranges) == 1:
+        return santa
+
     no_move(game, santa)
 
     navigation = Navigation(santa, game)
@@ -53,11 +55,13 @@ def line_strat(challenge):
 
 def line_strat_full_speed(challenge):
     print('line full speed strat')
-    print('line strat')
     game = Game(challenge)
     santa = Santa(game)
 
     no_move(game, santa)
+
+    if len(game.acceleration_ranges) == 1:
+        return santa
 
     navigation = Navigation(santa, game)
 
