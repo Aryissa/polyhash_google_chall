@@ -50,3 +50,10 @@ def diviseur(nb):
         nb //= 10
         res *= 10
     return res
+
+def gift_plus_proche(cluster,santa_x,santa_y):
+    gift_proche=cluster[0]
+    for gift in cluster:
+        if get_distance(gift_proche.x,gift_proche.y,santa_x,santa_y)>get_distance(gift.x,gift.y,santa_x,santa_y):
+            gift_proche=gift
+    return gift_proche
