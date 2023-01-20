@@ -377,10 +377,11 @@ class Navigation:
     def predict_carrots(self, moyenne_dist_cadeaux):
         nb_carrots=0
         if self.game.range> moyenne_dist_cadeaux:
-            nb_carrots=len(self.santa.gifts)/2
+            nb_carrots=(len(self.santa.gifts)*(moyenne_dist_cadeaux/self.santa.max_speed()))/2
         else:
-            nb_carrots=len(self.santa.gifts)
-        return nb_carrots
+            nb_carrots=(len(self.santa.gifts)*(moyenne_dist_cadeaux/self.santa.max_speed()))
+        return int(nb_carrots)
+    
 
     def chemin_kruskal(self,cluster,santa):
         list_cadeau_visite=[]
@@ -393,24 +394,33 @@ class Navigation:
             list_cadeau_visite.append(gift_proche)
             cluster_copy.remove(gift_proche)
         return list_cadeau_visite
+    
 
-    def deplacement_cluster(self,cluster,santa,max_weight):
+    
+
+    def deplacement_cluster(self,cluster,santa,max_weight,moyenne):
         #init chemin
         chemin=self.chemin_kruskal(cluster,santa)
         taille_chemin=len(chemin)
         #Si on est au dépot
         while santa.time<self.game.max_time or taille_chemin!=0:
             if santa.x==0 and santa.y==0:
-                if santa.nb_carrots<50:
-                    santa.load_carrot(50-santa.nb_carrots)
                 for i in range (0,len(chemin)):
-                    if (santa.weight+chemin[i].weight<max_weight):
+                    if(santa.weight+chemin[i].weight<max_weight):
                         santa.load_gift(chemin[i])
                     else:
+                        if(len(santa.gifts)!=0):
+                            santa.load_carrot(max_weight-santa.weight-1)
+                            prediction_carrots=self.predict_carrots(moyenne)-santa.nb_carrots-1
+                            while (santa.nb_carrots<prediction_carrots):
+                                santa.gifts.pop()
+                                santa.load_carrot(abs(santa.nb_carrots-max_weight-santa.weight))
                         break
         # Poser des cadeaux
             santa.gifts=list(set(santa.gifts))
-            while (len(santa.gifts)!=0 and santa.nb_carrots>11 and santa.time<self.game.max_time):
+            carrot_rentre_maison=0
+            print("carrote rentrer maison: ",carrot_rentre_maison)
+            while (len(santa.gifts)!=0 and santa.nb_carrots>carrot_rentre_maison and santa.time<self.game.max_time):
                 x=santa.gifts[0].x
                 y=santa.gifts[0].y
                 self.go_point(x,y)
