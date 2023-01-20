@@ -69,16 +69,17 @@ class Santa:
             self.vy += value
             if value > 0:
                 self.add_output(f'AccUp {value}')
-            else:
+            elif value < 0:
                 self.add_output(f'AccDown {-value}')
         else:
             self.vx += value
             if value > 0:
                 self.add_output(f'AccRight {value}')
-            else:
+            elif value < 0:
                 self.add_output(f'AccLeft {-value}')
-        self.nb_carrots -= 1
-        self.weight -= 1
+        if value != 0:
+            self.nb_carrots -= 1
+            self.weight -= 1
         self.float()
 
     """

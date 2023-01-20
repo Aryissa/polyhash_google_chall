@@ -1,7 +1,9 @@
 import Game
 import Gift
 import Santa
-from utils import get_distance_x_or_y, enumerate_vectors, gift_here, gifts_in_range
+from utils import get_distance_x_or_y, enumerate_vectors, gift_here, gifts_in_range, get_distance
+from math import ceil, floor
+import matplotlib.pyplot as plt
 
 
 class Navigation:
@@ -644,3 +646,120 @@ class Navigation:
             # TODO
             return 0
         return carrots
+
+    def get_closest_vector(self, xa, xb, x, y):
+        a, b = (x - xa, y - xb)
+        sa = a / abs(a) if a else 0  # Signe de a, en évitant la division par 0
+        sb = b / abs(b) if b else 0  # Signe de b, en évitant la division par 0
+
+        max_s = self.santa.max_speed()
+
+        # Si a est au-dessus de la v-max
+        if abs(a) > max_s:
+            b -= abs(a - max_s) * abs(b / a) * sb  # on soustrait à b proportionnellement à ce que l'on va enlever à a
+            a = max_s * sa  # on met a à la vitesse max de son signe
+
+        # Si b est au-dessus de la v-max
+        if abs(b) > max_s:
+            a -= abs(b - max_s) * abs(a / b) * sa  # on soustrait à a proportionnellement à ce que l'on va enlever à b
+            b = max_s * sb  # on met b à la vitesse max de son signe
+        return ceil(a), ceil(b)
+
+    def find_nb_accel_approximatif(self, xa, ya, xb, yb):
+        # Meilleur vecteur pour aller au plus proche sans être au-dessus de la v-max
+        a, b = self.get_closest_vector(xa, ya, xb, yb)
+        # Nombre de carottes / acceleration que l'on utilisera pour y aller
+
+        # On regarde si une direction est à 0
+        one_way = False
+        way = 0
+        if a == 0:
+            way = 1
+            one_way = True
+        if b == 0:
+            way = 0
+            one_way = True
+
+        second = True
+        nb = 0 if not one_way else way  # On n'alterne pas si on va dans une seule direction
+
+        # Initialisation coordonnée et vitesse de base
+        x, y = xa, ya
+        vx = vy = 0
+
+        counter = 0
+
+        # Tant que l'on n'a pas dépassé l'objectif, avec un temps d'avance (d'où le +vx et +vy)
+        while not (xa < xb < x + vx or x + vx < xb < xa or ya < yb < y + vy or y + vy < yb < ya):
+            if nb % 2 == 0:
+                vx += a
+            else:
+                vy += b
+            # A chaque tour (qui sera float), on avance de la vitesse
+            # x2 car on compte le retour (exactement meme sequence)
+            x += vx * 2
+            y += vy * 2
+
+            # On alterne toutes les 2 fois
+            if second:
+                if not one_way:  # Seulement si on va dans les 2 directions
+                    nb += 1
+            second = not second
+            counter += 1
+
+        return counter, x - vx, y - vy
+
+    def go_approximatif(self, x, y):
+        """ On va vers un point, approximativement et le plus vite possible
+        """
+        print(self.santa.nb_carrots)
+        # Meilleur vecteur pour aller au plus proche sans être au-dessus de la v-max
+        a, b = self.get_closest_vector(self.santa.x, self.santa.y, x, y)
+        # Nombre de carottes / acceleration que l'on utilisera pour y aller
+        it, dx, dy = self.find_nb_accel_approximatif(self.santa.x, self.santa.y, x, y)
+
+        # On regarde si une direction est à 0
+        one_way = False
+        way = 0
+        if a == 0:
+            way = 1
+            one_way = True
+        if b == 0:
+            way = 0
+            one_way = True
+
+        for m in [1, -1]:
+            second = True
+            nb = 0 if not one_way else way  # On n'alterne pas si on va dans une seule direction
+
+            for _ in range(it):
+                if nb % 2 == 0:
+                    self.santa.accelerate('horizontal', m * a)
+                else:
+                    self.santa.accelerate('vertical', m * b)
+
+                # On alterne toutes les 2 fois
+                if second:
+                    if not one_way:  # Seulement si on va dans les 2 directions
+                        nb += 1
+                second = not second
+        return it
+
+    def go(self, x, y):
+        while get_distance(self.santa.x, self.santa.y, x, y) > self.game.range * 2:
+            it = self.go_approximatif(x, y)
+            if not it:
+                break
+        self.go_point_slow(x, y)
+
+    def predict_carrots_go(self, x, y):
+        total = 0
+
+        cx, cy = self.santa.x, self.santa.y
+        while get_distance(cx, cy, x, y) > self.game.range * 2:
+            it, cx, cy = self.find_nb_accel_approximatif(cx, cy, x, y)
+            if not it:
+                break
+            total += it * 2
+
+        return total
