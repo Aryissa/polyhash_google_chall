@@ -6,12 +6,7 @@ class Zone:
     def __init__(self, gifts:list):
         self.gifts = gifts
         self.cluster=[]
-        #ratio = 0
-        #self.weight = 0
-        #for i in gifts:
-            #ratio = ratio+ i.ratio
-            #self.weight = self.weight+i.weight
-        #self.ratio = ratio / len(gifts)
+        self.list_ratio=[]
         #self.initial_gift = max(gifts, key=lambda gift: gift.ratio)
     
     def moyenne_points(self,map:Map,santa):
@@ -33,12 +28,11 @@ class Zone:
             somme_moyenne=somme_moyenne+moyenne
 
         if(len(list_moyenne)==0):
-            return None
+            return 10
         return int(somme_moyenne/len(list_moyenne))+santa.taille_map//(santa.taille_map//diviseur(santa.taille_map))
 
     def clusterisation(self,distance_moyenne):
         list_cluster=[]
-        list_gift_restant=self.gifts
         for gift_1 in self.gifts:
             list_courante=[]
             for list_c in list_cluster:
@@ -46,12 +40,13 @@ class Zone:
                     list_courante=list_c
                     list_cluster.remove(list_c)
                     break;
-            for gift_2 in list_gift_restant:
+            for gift_2 in self.gifts:
                 if(gift_2 not in list_courante):
                     if (gift_2.x in range(gift_1.x-distance_moyenne,gift_1.x+distance_moyenne) and gift_2.y in range(gift_1.y-distance_moyenne,gift_1.y+distance_moyenne)):
                         list_courante.append(gift_2)
+            if(list_courante==[]):
+                list_courante.append(gift_1)
             list_cluster.append(list_courante)
-            list_gift_restant.remove(gift_1)
         list_cluster_temp=list_cluster
         for list_c1 in list_cluster:
             for list_c2 in list_cluster:
@@ -69,3 +64,15 @@ class Zone:
                 somme_score_cluster=somme_score_cluster+gift.score
             list_score.append(somme_score_cluster)
         return list_score
+
+    def cacul_ratio_par_cluster(self):
+        list_ratio=[]
+        for cluster in self.cluster:
+            ratio = 0
+            weight = 0
+            for gift in cluster:
+                ratio = ratio+ gift.ratio
+                weight = weight+gift.weight
+            list_ratio.append(ratio / len(cluster))
+        self.list_ratio=list_ratio
+        return list_ratio

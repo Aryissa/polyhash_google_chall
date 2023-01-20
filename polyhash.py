@@ -36,6 +36,7 @@ if __name__ == "__main__":
     print("=============")
     print(f"Challenge {args.challenge}\n")
     print(game)
+    print("AAAAAAAAAAAA",game.nb_acceleration_ranges)
     # solution = solve(challenge)
     # print(f"Score: {score_solution(solution)}")
     map = Map(game.gifts)
@@ -46,17 +47,24 @@ if __name__ == "__main__":
     cluster = zone.clusterisation(moyenne)
     print("TAILLE DU CLUSTER", len(cluster))
     print("SCORE CLUSTER", zone.calcul_score_total_cluster())
+    print("LISTE DES RATIOS: ",zone.cacul_ratio_par_cluster())
 
 
     #solution = solve(challenge)
     #print(f"Score: {score_solution(solution)}")
     navigation = Navigation(santa, game)
+    #print(navigation.chemin_kruskal(cluster[0],santa))
     game.gifts = sorted(game.gifts, key=lambda gift: gift.ratio)
 
     for gift in utils.gifts_in_range(0, 0, game.range, game.gifts):
         santa.load_gift(gift)
         game.gifts.remove(gift)
         santa.deliver(gift)
+
+    for c in cluster:
+        navigation.deplacement_cluster(c,santa,1000,moyenne)
+        if santa.time>=game.max_time:
+            break
     print(f'Score obtenu en ne bougeant pas : {santa.score}')
 
     if False:
@@ -78,4 +86,5 @@ if __name__ == "__main__":
     print(f"\nScore : {santa.score}\nTemps : {santa.time}/{game.max_time}")
 
     santa.affichage_zone()
+    #santa.affichage()
     plt.show()
