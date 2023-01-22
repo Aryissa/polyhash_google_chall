@@ -643,9 +643,9 @@ class Navigation:
     def predict_carrots(self, moyenne_dist_cadeaux):
         nb_carrots=0
         if self.game.range> moyenne_dist_cadeaux:
-            nb_carrots=(len(self.santa.gifts)*(moyenne_dist_cadeaux/self.santa.max_speed()))/2
+            nb_carrots=(len(self.santa.gifts)*(moyenne_dist_cadeaux/self.santa.max_acceleration()))/2
         else:
-            nb_carrots=(len(self.santa.gifts)*(moyenne_dist_cadeaux/self.santa.max_speed()))
+            nb_carrots=(len(self.santa.gifts)*(moyenne_dist_cadeaux/self.santa.max_acceleration()))
         return int(nb_carrots)
 
 
@@ -784,35 +784,42 @@ class Navigation:
     def deplacement_cluster(self,cluster,santa,max_weight,moyenne):
         #init chemin
         chemin=self.chemin_kruskal(cluster,santa)
-        taille_chemin=len(chemin)
         #Si on est au dépot
-        while santa.time<self.game.max_time or taille_chemin!=0:
+        while self.santa.time<self.game.max_time or len(chemin)!=0:
             if santa.x==0 and santa.y==0:
                 for i in range (0,len(chemin)):
-                    if(santa.weight+chemin[i].weight<max_weight):
-                        santa.load_gift(chemin[i])
+                    if(self.santa.weight+chemin[i].weight<max_weight):
+                        self.santa.load_gift(chemin[i])
                     else:
-                        if(len(santa.gifts)!=0):
-                            santa.load_carrot(max_weight-santa.weight-1)
-                            prediction_carrots=self.predict_carrots(moyenne)-santa.nb_carrots-1
-                            while (santa.nb_carrots<prediction_carrots):
-                                santa.gifts.pop()
-                                santa.load_carrot(abs(santa.nb_carrots-max_weight-santa.weight))
+                        if(len(self.santa.gifts)!=0):
+                            #print("----------------------------------")
+                            self.santa.load_carrot(max_weight-santa.weight-1)
+                            if (self.game.range!=0):
+                                gift_proche=gift_plus_proche(cluster,self.santa.x,self.santa.y)
+                                prediction_carrots=(((len(santa.gifts)+1)*self.predict_carrots_go(moyenne,moyenne)/self.game.range)-1+3*self.predict_carrots_go(gift_proche.x,gift_proche.y))-santa.nb_carrots
+                                #print("Prediction", prediction_carrots)
+                            while (self.santa.nb_carrots<prediction_carrots):
+                                if len(self.santa.gifts)!=0:
+                                    gift_suppr=santa.gifts.pop()
+                                    santa.load_carrot(gift_suppr.weight-1)
                         break
+                    
+                
         # Poser des cadeaux
-            santa.gifts=list(set(santa.gifts))
-            carrot_rentre_maison=0
-            print("carrote rentrer maison: ",carrot_rentre_maison)
-            while (len(santa.gifts)!=0 and santa.nb_carrots>carrot_rentre_maison and santa.time<self.game.max_time):
-                x=santa.gifts[0].x
-                y=santa.gifts[0].y
-                self.go(x,y)
-                copy_santa_gift=[g for g in santa.gifts]
+            self.santa.gifts=list(set(santa.gifts))
+            x=0
+            y=0
+            while (len(self.santa.gifts)!=0 and self.santa.nb_carrots>self.predict_carrots_go(0,0) and self.santa.time<self.game.max_time):
+                x=self.santa.gifts[0].x
+                y=self.santa.gifts[0].y
+                if(self.santa.nb_carrots>self.predict_carrots_go(x,y)*2):
+                    self.go(x,y)
+                else:
+                    print("retour maison")
+                    break
+                copy_santa_gift=[g for g in self.santa.gifts]
                 for gift in copy_santa_gift:
                     if len(gifts_in_range(x, y, self.game.range, [gift]))!=0:
-                        santa.deliver(gift)
+                        self.santa.deliver(gift)
                         chemin.remove(gift)
-                        taille_chemin=taille_chemin-1
-
             self.go(0,0)
-        self.go(0,0)
