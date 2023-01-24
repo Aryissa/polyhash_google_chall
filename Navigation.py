@@ -1,9 +1,7 @@
 import Game
-import Gift
 import Santa
-from utils import get_distance_x_or_y, enumerate_vectors, gift_here, gifts_in_range, get_distance
+from utils import get_distance_x_or_y, enumerate_vectors, gift_here, gifts_in_range, get_distance, gift_plus_proche
 from math import ceil, floor
-import matplotlib.pyplot as plt
 
 
 class Navigation:
@@ -16,12 +14,11 @@ class Navigation:
         self.santa = santa
         self.game = game
 
-    """
-    Dirige le père Noël vers un point précis à vitesse lente
-    (Généralement utilisé pour aller à un point proche)
-    """
     def go_point_slow(self, x, y):
-
+        """
+        Dirige le père Noël vers un point précis à vitesse lente
+        (Généralement utilisé pour aller à un point proche)
+        """
         # Si la coordonnée en x est bonne, mais que le père Noël possède une accélération
         if x == self.santa.x and self.santa.vx != 0:
             self.set_vx_to_zero()
@@ -50,7 +47,8 @@ class Navigation:
                 self.set_vy_to_zero()
 
         # Quand le point est proche de la position de départ
-        if get_distance_x_or_y(self.santa.x, x) <= self.santa.max_acceleration() and get_distance_x_or_y(self.santa.y, y) <= self.santa.max_acceleration():
+        if get_distance_x_or_y(self.santa.x, x) <= self.santa.max_acceleration() and get_distance_x_or_y(self.santa.y,
+                                                                                                         y) <= self.santa.max_acceleration():
             # Pour x
             # Se rend sur le point quand il est positif par rapport à santa
             if x > self.santa.x:
@@ -116,7 +114,8 @@ class Navigation:
                 return False
 
             # Vérifie si x et y sont tous les deux proches du point voulu
-            if get_distance_x_or_y(self.santa.x, x) <= self.santa.max_acceleration()*2 and get_distance_x_or_y(self.santa.y, y) <= self.santa.max_acceleration()*2 and x != self.santa.x and y != self.santa.y:
+            if get_distance_x_or_y(self.santa.x, x) <= self.santa.max_acceleration() * 2 and get_distance_x_or_y(
+                    self.santa.y, y) <= self.santa.max_acceleration() * 2 and x != self.santa.x and y != self.santa.y:
                 # Au moins une des deux distances est impaire :
                 if get_distance_x_or_y(self.santa.x, x) % 2 != 0 or get_distance_x_or_y(self.santa.y, y) % 2 != 0:
                     if get_distance_x_or_y(self.santa.x, x) < get_distance_x_or_y(self.santa.y, y):
@@ -144,16 +143,20 @@ class Navigation:
                 else:
                     if get_distance_x_or_y(self.santa.x, x) < get_distance_x_or_y(self.santa.y, y):
                         if self.santa.vx > 0:
-                            self.santa.accelerate("horizontal", -self.santa.vx + get_distance_x_or_y(self.santa.x, x) // 2)
+                            self.santa.accelerate("horizontal",
+                                                  -self.santa.vx + get_distance_x_or_y(self.santa.x, x) // 2)
                         else:
-                            self.santa.accelerate("horizontal", -self.santa.vx - get_distance_x_or_y(self.santa.x, x) // 2)
+                            self.santa.accelerate("horizontal",
+                                                  -self.santa.vx - get_distance_x_or_y(self.santa.x, x) // 2)
                         if get_distance_x_or_y(self.santa.y, y) <= self.santa.max_acceleration():
                             self.y_is_close(y)
-                    else: # faire un else if > et un else =
+                    else:  # faire un else if > et un else =
                         if self.santa.vy > 0:
-                            self.santa.accelerate("vertical", -self.santa.vy + get_distance_x_or_y(self.santa.y, y) // 2)
+                            self.santa.accelerate("vertical",
+                                                  -self.santa.vy + get_distance_x_or_y(self.santa.y, y) // 2)
                         else:
-                            self.santa.accelerate("vertical", -self.santa.vy - get_distance_x_or_y(self.santa.y, y) // 2)
+                            self.santa.accelerate("vertical",
+                                                  -self.santa.vy - get_distance_x_or_y(self.santa.y, y) // 2)
                         if get_distance_x_or_y(self.santa.x, x) <= self.santa.max_acceleration():
                             self.x_is_close(x)
 
@@ -176,11 +179,11 @@ class Navigation:
 
         return True
 
-    """"
-    Vérifie si la coordonnée en y est proche, va sur le point puis met la vitesse à zéro, puis vérifie si x est
-    devenu proche avec ces deux actions
-    """
     def y_close_then_x_close(self, x, y):
+        """
+        Vérifie si la coordonnée en y est proche, va sur le point puis met la vitesse à zéro, puis vérifie si x est
+        devenu proche avec ces deux actions
+        """
         # Vérifier si y est proche
         if get_distance_x_or_y(self.santa.y, y) <= self.santa.max_acceleration() and y != self.santa.y:
             self.y_is_close(y)
@@ -190,11 +193,11 @@ class Navigation:
             self.x_is_close(x)
             self.set_vx_to_zero()
 
-    """"
-    Vérifie si la coordonnée en y est proche, va sur le point puis met la vitesse à zéro, puis vérifie si x est
-    devenu proche avec ces deux actions
-    """
     def x_close_then_y_close(self, x, y):
+        """
+        Vérifie si la coordonnée en y est proche, va sur le point puis met la vitesse à zéro, puis vérifie si x est
+        devenu proche avec ces deux actions
+        """
         # Vérifier si x est proche
         if get_distance_x_or_y(self.santa.x, x) <= self.santa.max_acceleration() and x != self.santa.x:
             self.x_is_close(x)
@@ -204,10 +207,10 @@ class Navigation:
             self.y_is_close(y)
             self.set_vy_to_zero()
 
-    """"
-    Vérifie si la coordonnée en y est proche, va sur le point puis ne met pas la vitesse à zéro
-    """
     def y_is_close(self, y):
+        """
+        Vérifie si la coordonnée en y est proche, va sur le point puis ne met pas la vitesse à zéro
+        """
         if y > self.santa.y:
             if self.santa.vy < 0:
                 self.set_vy_to_zero()
@@ -216,10 +219,10 @@ class Navigation:
                 self.set_vy_to_zero()
         self.santa.accelerate("vertical", -self.santa.vy + y - self.santa.y)
 
-    """"
-    Vérifie si la coordonnée en x est proche, va sur le point puis ne met pas la vitesse à zéro
-    """
     def x_is_close(self, x):
+        """
+        Vérifie si la coordonnée en x est proche, va sur le point puis ne met pas la vitesse à zéro
+        """
         if x > self.santa.x:
             if self.santa.vx < 0:
                 self.set_vx_to_zero()
@@ -228,16 +231,16 @@ class Navigation:
                 self.set_vx_to_zero()
         self.santa.accelerate("horizontal", -self.santa.vx + x - self.santa.x)
 
-    """"
-    Met la vitesse horizontale à zéro
-    """
     def set_vx_to_zero(self):
+        """
+        Met la vitesse horizontale à zéro
+        """
         self.santa.accelerate("horizontal", -self.santa.vx)
 
-    """"
-    Met la vitesse verticale à zéro
-    """
     def set_vy_to_zero(self):
+        """
+        Met la vitesse verticale à zéro
+        """
         self.santa.accelerate("vertical", -self.santa.vy)
 
     def run_line(self, method=1):
@@ -258,7 +261,7 @@ class Navigation:
                 actions = self.lines_rs_actions_2(0, 0)
 
                 action = None
-                #pprint(actions)
+                # pprint(actions)
                 for a in actions:
                     if self.santa.time + a['time'] <= self.game.max_time:
                         action = a
@@ -272,7 +275,7 @@ class Navigation:
                 action2 = None
                 if self.santa.time + (action['time'] * 2) > self.game.max_time:
                     for a in actions:
-                        if self.santa.time + action['time'] + (a['time']*2) <= self.game.max_time:
+                        if self.santa.time + action['time'] + (a['time'] * 2) <= self.game.max_time:
                             action2 = a
                             break
                 if action2:
@@ -285,7 +288,7 @@ class Navigation:
                     break
                 self.lines_rs_return_x(action['vector'], action['nb_accel'])
 
-        #if method == 3:
+        # if method == 3:
         #    while True:
         #        action1 = self.lines_rs_actions_2(0, 0)
         #        action2 = self.lines_r_actions(0, 0)
@@ -496,7 +499,8 @@ class Navigation:
                     if gift in action['gifts']:
                         continue
                     weight += gift.weight
-                    if self.max_acceleration(weight + nb_carrots) < abs(vector[0]) or self.max_acceleration(weight + nb_carrots) < abs(vector[1]):
+                    if self.max_acceleration(weight + nb_carrots) < abs(vector[0]) or self.max_acceleration(
+                            weight + nb_carrots) < abs(vector[1]):
                         end = True
                         weight -= gift.weight
                         break
@@ -571,7 +575,9 @@ class Navigation:
                         if gift in action['gifts']:
                             continue
                         weight += gift.weight
-                        if self.max_acceleration(weight + nb_carrots) < max([abs(vector[0]), abs(vector[1])]) or self.max_acceleration(weight + nb_carrots) < abs(vector[1]):
+                        if self.max_acceleration(weight + nb_carrots) < max(
+                                [abs(vector[0]), abs(vector[1])]) or self.max_acceleration(weight + nb_carrots) < abs(
+                            vector[1]):
                             end = True
                             weight -= gift.weight
                             break
@@ -602,7 +608,8 @@ class Navigation:
 
     def lines_rs_navigate_x(self, action):
         a, b = action['vector']
-        self.santa.load_carrot(action['carrots'] - self.santa.nb_carrots if action['carrots'] >= self.santa.nb_carrots else 0)
+        self.santa.load_carrot(
+            action['carrots'] - self.santa.nb_carrots if action['carrots'] >= self.santa.nb_carrots else 0)
         for g in action['gifts']:
             self.game.gifts.remove(g)
             self.santa.load_gift(g)
@@ -641,68 +648,61 @@ class Navigation:
         return 0
 
     def predict_carrots(self, moyenne_dist_cadeaux):
-        nb_carrots=0
-        if self.game.range> moyenne_dist_cadeaux:
-            nb_carrots=(len(self.santa.gifts)*(moyenne_dist_cadeaux/self.santa.max_speed()))/2
+        nb_carrots = 0
+        if self.game.range > moyenne_dist_cadeaux:
+            nb_carrots = (len(self.santa.gifts) * (moyenne_dist_cadeaux / self.santa.max_speed())) / 2
         else:
-            nb_carrots=(len(self.santa.gifts)*(moyenne_dist_cadeaux/self.santa.max_speed()))
+            nb_carrots = (len(self.santa.gifts) * (moyenne_dist_cadeaux / self.santa.max_speed()))
         return int(nb_carrots)
 
-
-    def chemin_kruskal(self,cluster,santa):
-        list_cadeau_visite=[]
-        cluster_copy=[g for g in cluster]
-        gift_proche=gift_plus_proche(cluster_copy,santa.x,santa.y)
+    def chemin_kruskal(self, cluster, santa):
+        list_cadeau_visite = []
+        cluster_copy = [g for g in cluster]
+        gift_proche = gift_plus_proche(cluster_copy, santa.x, santa.y)
         list_cadeau_visite.append(gift_proche)
         cluster_copy.remove(gift_proche)
-        while len(list_cadeau_visite)<len(cluster):
-            gift_proche=gift_plus_proche(cluster_copy,gift_proche.x,gift_proche.y)
+        while len(list_cadeau_visite) < len(cluster):
+            gift_proche = gift_plus_proche(cluster_copy, gift_proche.x, gift_proche.y)
             list_cadeau_visite.append(gift_proche)
             cluster_copy.remove(gift_proche)
         return list_cadeau_visite
 
-
-
-
-    def deplacement_cluster(self,cluster,santa,max_weight,moyenne):
-        #init chemin
-        chemin=self.chemin_kruskal(cluster,santa)
-        taille_chemin=len(chemin)
-        #Si on est au dépot
-        while santa.time<self.game.max_time or taille_chemin!=0:
-            if santa.x==0 and santa.y==0:
-                for i in range (0,len(chemin)):
-                    if(santa.weight+chemin[i].weight<max_weight):
+    def deplacement_cluster(self, cluster, santa, max_weight, moyenne):
+        # init chemin
+        chemin = self.chemin_kruskal(cluster, santa)
+        taille_chemin = len(chemin)
+        # Si on est au dépot
+        while santa.time < self.game.max_time or taille_chemin != 0:
+            if santa.x == 0 and santa.y == 0:
+                for i in range(0, len(chemin)):
+                    if (santa.weight + chemin[i].weight < max_weight):
                         santa.load_gift(chemin[i])
                     else:
-                        if(len(santa.gifts)!=0):
-                            santa.load_carrot(max_weight-santa.weight-1)
-                            prediction_carrots=self.predict_carrots(moyenne)-santa.nb_carrots-1
-                            while (santa.nb_carrots<prediction_carrots):
+                        if (len(santa.gifts) != 0):
+                            santa.load_carrot(max_weight - santa.weight - 1)
+                            prediction_carrots = self.predict_carrots(moyenne) - santa.nb_carrots - 1
+                            while (santa.nb_carrots < prediction_carrots):
                                 santa.gifts.pop()
-                                santa.load_carrot(abs(santa.nb_carrots-max_weight-santa.weight))
+                                santa.load_carrot(abs(santa.nb_carrots - max_weight - santa.weight))
                         break
-        # Poser des cadeaux
-            santa.gifts=list(set(santa.gifts))
-            carrot_rentre_maison=0
-            print("carrote rentrer maison: ",carrot_rentre_maison)
-            while (len(santa.gifts)!=0 and santa.nb_carrots>carrot_rentre_maison and santa.time<self.game.max_time):
-                x=santa.gifts[0].x
-                y=santa.gifts[0].y
-                self.go_point(x,y)
-                copy_santa_gift=[g for g in santa.gifts]
+            # Poser des cadeaux
+            santa.gifts = list(set(santa.gifts))
+            carrot_rentre_maison = 0
+            print("carrote rentrer maison: ", carrot_rentre_maison)
+            while (
+                    len(santa.gifts) != 0 and santa.nb_carrots > carrot_rentre_maison and santa.time < self.game.max_time):
+                x = santa.gifts[0].x
+                y = santa.gifts[0].y
+                self.go_point_slow(x, y)
+                copy_santa_gift = [g for g in santa.gifts]
                 for gift in copy_santa_gift:
-                    if len(gifts_in_range(x, y, self.game.range, [gift]))!=0:
+                    if len(gifts_in_range(x, y, self.game.range, [gift])) != 0:
                         santa.deliver(gift)
                         chemin.remove(gift)
-                        taille_chemin=taille_chemin-1
+                        taille_chemin = taille_chemin - 1
 
-            self.go_point(0,0)
-        self.go_point(0,0)
-
-
-
-
+            self.go_point_slow(0, 0)
+        self.go_point_slow(0, 0)
 
     def get_closest_vector(self, xa, xb, x, y):
         a, b = (x - xa, y - xb)
