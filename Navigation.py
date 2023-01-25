@@ -269,7 +269,7 @@ class Navigation:
         # Exploite la distance de dépot des cadeaux.
         if method == 2:
             while True:
-                actions = self.lines_rs_actions_2(0, 0)
+                actions = self.lines_rs_actions(0, 0)
 
                 action = None
                 # pprint(actions)
@@ -359,48 +359,68 @@ class Navigation:
                 if gift_here(x + vector[0] * (i + 1), y + vector[1] * i, gifts):
                     gift = gifts[len(action['gifts'])]
                     weight += gift.weight
+
                     if self.max_acceleration(weight) < vector[0] or self.max_acceleration(weight) < vector[1]:
                         break
+
                     action['gifts'].append(gift)
                     action['score'] += gift.score
                 action['time'] += 1
                 i += 1
             action['time'] = action['time'] * 2 + 4
             actions.append(action)
+
+        # Revoie la ligne qui a le meilleur ratio Score / Temps
         return max(actions, key=lambda a: a['score'] / a['time'])
 
     def lines_navigate_x(self, action):
         y_depart = self.santa.y
         a, b = action['vector']
+
+        # 7 carottes sont necessaires (8, mais on peut prendre la derniere sur la case départ)
         self.santa.load_carrot(7)
+
         for g in action['gifts']:
             self.game.gifts.remove(g)
             self.santa.load_gift(g)
+
         self.santa.accelerate('horizontal', a)
+
         if action['time'] == 1:
             self.santa.deliver(self.santa.gifts[0])
             self.santa.accelerate('horizontal', -a)
             self.santa.accelerate('horizontal', -a)
             self.santa.accelerate('horizontal', a)
             return
+
         if gift_here(self.santa.x, self.santa.y, self.santa.gifts):
             self.santa.deliver(self.santa.gifts[0])
+
         self.santa.accelerate('vertical', b)
+
+        # On avance tant qu'on n'a pas délivré tous les cadeaux
         while len(self.santa.gifts) != 0:
             if gift_here(self.santa.x, self.santa.y, self.santa.gifts):
                 self.santa.deliver(self.santa.gifts[0])
             self.santa.float()
+
+        # Demi tour
         self.santa.accelerate('horizontal', -a)
         self.santa.accelerate('vertical', -b)
         self.santa.accelerate('vertical', -b)
         self.santa.accelerate('horizontal', -a)
+
+        # On avance jusqu'au point de départ
         while self.santa.y != y_depart:
             self.santa.float()
+
+        # Vitesse à 0
         self.santa.accelerate('vertical', b)
         self.santa.load_carrot(1)
         self.santa.accelerate('horizontal', a)
 
     def line_r(self, x, y, max_speed=4):
+        """Même que line mais cadeaux sélectionnés si entre deux droites"""
         lines_x = dict()
         lines_y = dict()
         for vector in enumerate_vectors(max_speed):
@@ -411,13 +431,17 @@ class Navigation:
                 if a * gift.x <= 0 or b * gift.y <= 0:
                     # Pour ne pas aller dans les 2 sens
                     continue
-                # On regarde si le cadeau est sur la droite
+
+                # On regarde si le cadeau est entre les deux droites
                 x_res = x + (b / a) * gift.x + b
                 y_res = x + (b / a) * gift.x - b
                 if y + gift.y + self.game.range >= x_res >= y + gift.y - self.game.range:
                     v.append(gift)
+                # EN partant par les abscisse
                 if y + gift.y + self.game.range >= y_res >= y + gift.y - self.game.range:
                     h.append(gift)
+
+            # On trie dans l'ordre du plus proche du point de départ
             h = sorted(h, key=lambda g: g.x, reverse=a < 0)
             v = sorted(v, key=lambda g: g.x, reverse=a < 0)
             lines_x[vector] = h
@@ -425,6 +449,7 @@ class Navigation:
         return lines_x, lines_y
 
     def lines_r_actions(self, x, y):
+        """Meme que lines_actions mais avec range"""
         v_x, v_y = self.line_r(x, y)
         actions = []
         for vector, gifts in v_x.items():
@@ -459,13 +484,17 @@ class Navigation:
         return max(actions, key=lambda a: a['score'] / a['time'])
 
     def lines_r_navigate_x(self, action):
+        """Même que lines_navigate_x mais avec range"""
         y_depart = self.santa.y
         a, b = action['vector']
         self.santa.load_carrot(7 - self.santa.nb_carrots if 7 >= self.santa.nb_carrots else 0)
+
         for g in action['gifts']:
             self.game.gifts.remove(g)
             self.santa.load_gift(g)
+
         self.santa.accelerate('horizontal', a)
+
         if action['time'] == 1:
             for gift in gifts_in_range(self.santa.x, self.santa.y, self.santa.range, self.santa.gifts):
                 self.santa.deliver(gift)
@@ -473,32 +502,42 @@ class Navigation:
             self.santa.accelerate('horizontal', -a)
             self.santa.accelerate('horizontal', a)
             return
+
         for gift in gifts_in_range(self.santa.x, self.santa.y, self.game.range, self.santa.gifts):
             self.santa.deliver(gift)
+
         self.santa.accelerate('vertical', b)
         while len(self.santa.gifts) != 0:
             for gift in gifts_in_range(self.santa.x, self.santa.y, self.game.range, self.santa.gifts):
                 self.santa.deliver(gift)
             self.santa.float()
+
+        # Demi tour
         self.santa.accelerate('horizontal', -a)
         self.santa.accelerate('vertical', -b)
         self.santa.accelerate('vertical', -b)
         self.santa.accelerate('horizontal', -a)
+
         while self.santa.y != y_depart:
             self.santa.float()
+
+        # Arret
         self.santa.accelerate('vertical', b)
         self.santa.load_carrot(1)
         self.santa.accelerate('horizontal', a)
 
-    def find_nb_accel(self, x, y, vector, gifts):
+    def find_nb_accel(self, x: int, y: int, vector, gifts):
+        """Cherche le nombre d'acceleration necessaire pour attaeindre un point seloon notre algo de ligne droite"""
         weight = 0
         last_x = 0
         a, b = vector
+
         for gift in gifts:
             weight += gift.weight
             if self.max_acceleration(weight) < max([abs(a), abs(b)]):
                 break
             last_x = gift.x
+
         dx_b = 0
         vx = 0
         counter = 0
@@ -509,10 +548,13 @@ class Navigation:
             dx_b += vx
         return counter
 
-    def lines_rs_actions_2(self, x, y):
+    def lines_rs_actions(self, x: int, y: int):
+        """Effectue l'action avant le père noel pour decider quel cadeau prendre"""
         max_speed = max(self.game.acceleration_ranges.values())
-        v_x, v_y = self.line_r(x, y, max_speed=max_speed)
+        v_x, v_y = self.line_r(x, y, max_speed=max_speed) # Les vecteurs disponibles
+
         actions = []
+
         for vector, gifts in v_x.items():
             action = dict()
             action['vector'] = vector
@@ -525,27 +567,38 @@ class Navigation:
             action['nb_accel'] = nb_accel
             vx = vy = 0
             nx, ny = x, y
-            for m in [1, -1]:
+
+            for m in [1, -1]:  # Acceleration puis deceleration (donc 2x la meme chose)
                 second = True
                 i = 0
                 for _ in range(nb_accel):
                     available_gifts = gifts_in_range(nx, ny, self.game.range, gifts)
                     available_gifts.sort(key=lambda g: g.score)
+
                     end = False
+
+                    # On regarde à chaque étape les cadeaux disponibles
                     for gift in available_gifts:
+                        # On ne remet pas 2 fois le même cadeau
                         if gift in action['gifts']:
                             continue
+
                         weight += gift.weight
+
+                        # On ne dépasse pas le poids max
                         if self.max_acceleration(weight + nb_carrots) < max(
                                 [abs(vector[0]), abs(vector[1])]) or self.max_acceleration(weight + nb_carrots) < abs(
                             vector[1]):
                             end = True
                             weight -= gift.weight
                             break
+
                         action['gifts'].append(gift)
                         action['score'] += gift.score
                     if end:
                         break
+
+                    # On accélère dans une direction 2 fois de suite
                     if i % 2 == 0:
                         vx += vector[0] * m
                     else:
@@ -553,33 +606,45 @@ class Navigation:
                     if second:
                         i += 1
                     second = not second
+
+                    # On change la vitesse a chaque fois (pour aller le plus vite possible)
                     action['time'] += 1
                     nx += vx
                     ny += vy
                     nb_carrots += 2
-            action['time'] += action['nb_accel'] * 2  # action['time'] * 2
+
+            action['time'] += action['nb_accel'] * 2
             action['carrots'] = action['nb_accel'] * 4
+
+            # Si apres l'ajout de carottes, on est trop lourd, on enleve des cadeaux
             while self.max_acceleration(weight + action['carrots']) < max([abs(vector[0]), abs(vector[1])]):
                 weight -= action['gifts'].pop().weight
 
+            # On n'ajoute pas l'action si elle ne donne pas de cadeaux
             if len(action['gifts']) != 0:
                 actions.append(action)
+        # On trie par action les plus intéressantes
         actions.sort(key=lambda a: a['score'] / a['time'], reverse=True)
         return actions
 
     def lines_rs_navigate_x(self, action):
+        """Réalise le chemin ligne droite rapide du père noel et distribue les cadeaux dans la range"""
         a, b = action['vector']
         self.santa.load_carrot(
             action['carrots'] - self.santa.nb_carrots if action['carrots'] >= self.santa.nb_carrots else 0)
+
         for g in action['gifts']:
             self.game.gifts.remove(g)
             self.santa.load_gift(g)
-        for m in [1, -1]:
+
+        for m in [1, -1]:  # Acceleration puis deceleration (donc 2x la meme chose)
             second = True
             nb = 0
             for _ in range(action['nb_accel']):
                 for gift in gifts_in_range(self.santa.x, self.santa.y, self.game.range, self.santa.gifts):
                     self.santa.deliver(gift)
+
+                # On accélère dans un sens 2 fois de suite
                 if nb % 2 == 0:
                     self.santa.accelerate('horizontal', m * a)
                 else:
@@ -589,6 +654,7 @@ class Navigation:
                 second = not second
 
     def lines_rs_return_x(self, vector, nb_accel):
+        """Permet de revenir au point de départ apres lines_rs_navigate_x"""
         a, b = vector
         for m in [-1, 1]:
             second = True
@@ -603,6 +669,7 @@ class Navigation:
                 second = not second
 
     def max_acceleration(self, weight):
+        """Donne l'accélération maximum de la configuration de la partie"""
         for k, v in self.game.acceleration_ranges.items():
             if k > weight:
                 return v
@@ -666,6 +733,7 @@ class Navigation:
         self.go_point_slow(0, 0)
 
     def get_closest_vector(self, xa, xb, x, y):
+        """Trouve le vecteur pour aller au point donné"""
         a, b = (x - xa, y - xb)
         sa = a / abs(a) if a else 0  # Signe de a, en évitant la division par 0
         sb = b / abs(b) if b else 0  # Signe de b, en évitant la division par 0
@@ -684,6 +752,7 @@ class Navigation:
         return ceil(a), ceil(b)
 
     def find_nb_accel_approximatif(self, xa, ya, xb, yb):
+        """Trouve le nombre d'accélérations pour aller au point. Approximatif"""
         # Meilleur vecteur pour aller au plus proche sans être au-dessus de la v-max
         a, b = self.get_closest_vector(xa, ya, xb, yb)
         # Nombre de carottes / acceleration que l'on utilisera pour y aller
@@ -764,6 +833,7 @@ class Navigation:
         return it
 
     def go(self, x, y):
+        """Va au point donné"""
         while get_distance(self.santa.x, self.santa.y, x, y) > self.game.range * 2:
             it = self.go_approximatif(x, y)
             if not it:
@@ -771,6 +841,7 @@ class Navigation:
         self.go_point_slow(x, y)
 
     def predict_carrots_go(self, x, y):
+        """Donne le nombre de carottes nécessaires pour aller à un point"""
         total = 0
 
         cx, cy = self.santa.x, self.santa.y
