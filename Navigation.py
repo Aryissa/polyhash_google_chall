@@ -1,7 +1,7 @@
 import Game
 import Santa
 from utils import get_distance_x_or_y, enumerate_vectors, gift_here, gifts_in_range, get_distance, gift_plus_proche
-from math import ceil, floor
+from math import ceil
 
 
 class Navigation:
@@ -272,7 +272,6 @@ class Navigation:
                 actions = self.lines_rs_actions(0, 0)
 
                 action = None
-                # pprint(actions)
                 for a in actions:
                     if self.santa.time + a['time'] <= self.game.max_time:
                         action = a
@@ -299,7 +298,7 @@ class Navigation:
                     break
                 self.lines_rs_return_x(action['vector'], action['nb_accel'])
 
-    def line(self, x: int, y: int, max_speed: int=4):
+    def line(self, x: int, y: int, max_speed: int = 4):
         """Pour toutes les demi droites disponibles, renvoie les cadeaux disponibles dessus.
         Ne prends pas en compte la distance de dépot"""
         lines_x = dict()
@@ -551,7 +550,7 @@ class Navigation:
     def lines_rs_actions(self, x: int, y: int):
         """Effectue l'action avant le père noel pour decider quel cadeau prendre"""
         max_speed = max(self.game.acceleration_ranges.values())
-        v_x, v_y = self.line_r(x, y, max_speed=max_speed) # Les vecteurs disponibles
+        v_x, v_y = self.line_r(x, y, max_speed=max_speed)  # Les vecteurs disponibles
 
         actions = []
 
