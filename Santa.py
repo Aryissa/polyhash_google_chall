@@ -12,6 +12,7 @@ class Santa:
     """
     Classe père Noël
     Comprend les différentes actions effectuées par le père Noël
+    Fournit un fichier des actions effectuées
     """
 
     def __init__(self, game: Game, zone: Zone = None):
@@ -45,20 +46,20 @@ class Santa:
         self.ax.set_aspect(1)
         self.taille_map = abs(x[0]) + abs(x[1])
 
-    """
-    Modifie les attributs du père Noël à chaque float
-    """
     def float(self):
+        """
+        Modifie les attributs du père Noël à chaque float
+        """
         self.coordinates.append((self.x, self.y, self.vx, self.vy))
         self.x += self.vx
         self.y += self.vy
         self.time += 1
         self.nb_float += 1
 
-    """
-    Permet au père Noël d'accélérer
-    """
     def accelerate(self, direction: str, value: int):
+        """
+        Permet au père Noël d'accélérer
+        """
         if self.nb_carrots == 0:
             raise Exception('PLUS DE CARROTES !!!')
         speed = self.max_acceleration()
@@ -82,30 +83,30 @@ class Santa:
             self.weight -= 1
         self.float()
 
-    """
-    Charge des carottes
-    """
     def load_carrot(self, nb: int):
+        """
+        Charge des carottes
+        """
         if get_distance(self.x, self.y, 0, 0) > self.game.range:
             raise Exception(f'Distance trop grande pour le ramassage de carrotes {self.x, self.y}')
         self.nb_carrots += nb
         self.weight += nb
         self.add_output(f'LoadCarrots {nb}')
 
-    """
-    Charge les cadeaux
-    """
     def load_gift(self, gift: Gift):
+        """
+        Charge les cadeaux
+        """
         if get_distance(self.x, self.y, 0, 0) > self.game.range:
             raise Exception('Distance trop grande pour le ramassage de cadeaux')
         self.gifts.append(gift)
         self.weight += gift.weight
         self.add_output(f'LoadGift {gift.name}')
 
-    """
-    Dépose le cadeau en paramètre
-    """
     def deliver(self, gift: Gift):
+        """
+        Dépose le cadeau en paramètre
+        """
         self.delivered.append((gift.x, gift.y))
         if get_distance(self.x, self.y, gift.x, gift.y) > self.game.range:
             raise Exception(f'Distance trop grande pour déposer de cadeau {gift.name}')
@@ -115,28 +116,28 @@ class Santa:
         self.gifts.remove(gift)
         self.add_output(f'DeliverGift {gift.name}')
 
-    """
-    Retourne accélération maximum
-    """
     def max_acceleration(self):
+        """
+        Retourne accélération maximum
+        """
         for k, v in self.game.acceleration_ranges.items():
             if k >= self.weight:
                 return v
         return 0
 
-    """
-    Ajoute chaque action au print final
-    """
     def add_output(self, string: str):
+        """
+        Ajoute chaque action au print final
+        """
         if self.nb_float:
             self.output += f"\nFloat {self.nb_float}"
             self.nb_float = 0
         self.output += f"\n{string}"
 
-    """
-    Affiche le print final contenant l'ensemble des actions effectuées
-    """
     def print(self):
+        """
+        Affiche le print final contenant l'ensemble des actions effectuées
+        """
         self.add_output('')
         size = len(self.output.split('\n')) - 2
         final = str(size) + self.output
@@ -144,10 +145,10 @@ class Santa:
             outFile.write(final)
         return final
 
-    """
-    Initialise l'affichage des cadeaux
-    """
     def affichage_init(self):
+        """
+        Initialise l'affichage des cadeaux
+        """
         for gift in self.game.gifts:
             x = gift.x
             y = gift.y
@@ -157,10 +158,10 @@ class Santa:
                 circle = plt.Circle((x, y), self.game.range, color='b', fill=False)
             self.ax.add_artist(circle)
 
-    """
-    Affiche les cadeaux, le père Noël, les vecteurs et change la couleur d'un cadeau déposés
-    """
     def affichage(self):
+        """
+        Affiche les cadeaux, le père Noël, les vecteurs et change la couleur d'un cadeau déposés
+        """
         # affichage des cadeaux
         self.affichage_init()
         # mise en place du pere noel et de sa taille (le z)
@@ -180,10 +181,10 @@ class Santa:
             circle = plt.Circle((elem[0], elem[1]), self.game.range, color='r', fill=False)
             self.ax.add_artist(circle)
 
-    """
-    Affiche des clusters
-    """
     def affichage_zone(self):
+        """
+        Affiche des clusters
+        """
         # récupération des données de zone
         new_cluster = []
         for gift in self.zone.cluster:

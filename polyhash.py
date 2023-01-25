@@ -36,9 +36,8 @@ if __name__ == "__main__":
     print("=============")
     print(f"Challenge {args.challenge}\n")
     print(game)
-    print("AAAAAAAAAAAA",game.nb_acceleration_ranges)
-    # solution = solve(challenge)
-    # print(f"Score: {score_solution(solution)}")
+
+
     map = Map(game.gifts)
     zone = Zone(game.gifts)
     santa = Santa(game,zone)
@@ -47,44 +46,27 @@ if __name__ == "__main__":
     cluster = zone.clusterisation(moyenne)
     print("TAILLE DU CLUSTER", len(cluster))
     print("SCORE CLUSTER", zone.calcul_score_total_cluster())
-    print("LISTE DES RATIOS: ",zone.cacul_ratio_par_cluster())
 
-
+    santa = solve(challenge)
     #solution = solve(challenge)
     #print(f"Score: {score_solution(solution)}")
     navigation = Navigation(santa, game)
     #print(navigation.chemin_kruskal(cluster[0],santa))
     game.gifts = sorted(game.gifts, key=lambda gift: gift.ratio)
 
-    for gift in utils.gifts_in_range(0, 0, game.range, game.gifts):
-        santa.load_gift(gift)
-        game.gifts.remove(gift)
-        santa.deliver(gift)
-
     for c in cluster:
         navigation.deplacement_cluster(c,santa,1000,moyenne)
         if santa.time>=game.max_time:
             break
-    print(f'Score obtenu en ne bougeant pas : {santa.score}')
+    print('Score de cluster : ', santa.score)
 
-    if False:
-        x = 0
-        while santa.time < game.max_time:
-            santa.load_gift(game.gifts[x])
-            x += 1
-            santa.load_carrot(10)
-            navigation.go_point(santa.gifts[0].x, santa.gifts[0].y)
-            santa.deliver(santa.gifts[0])
-            navigation.go_point(0, 0)
-    else:
-        while False:
-            action = navigation.lines_r_actions(0, 0)
-            if santa.time + action['time'] > game.max_time:
-                break
-            navigation.lines_r_navigate_x(action)
+    print('reset')
+
+    santa = solve(challenge)
+
+    santa.affichage()
     santa.print()
+    plt.show()
+
     print(f"\nScore : {santa.score}\nTemps : {santa.time}/{game.max_time}")
 
-    santa.affichage_zone()
-    #santa.affichage()
-    plt.show()
