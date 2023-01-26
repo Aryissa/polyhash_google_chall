@@ -9,6 +9,7 @@ class Map:
     Permet la définission d'une Map réduite 
     """
     def __init__(self,gifts:list):
+        #définission des quatres coté de la map
         self.top,self.bot,self.left,self.right,self.l_x,self.l_y=0,0,0,0,0,0
         for gift in gifts:
             x=gift.x
@@ -39,7 +40,6 @@ class Map:
             return False
         return True
     
-    #pas représente en combien tous les combien on créer un carré
     
     def split_in_scale(self,pas:int):
         """
@@ -57,12 +57,11 @@ class Map:
             x_origine,y_origine=point_origine_map
             x_final,y_final=point_final
             
-            if(x_final==self.right): #si notre x tombe pile sur le bord alors on repars
+            if(x_final==self.right): #si notre x tombe pile sur le bord de la map alors on reviens au x d'origine
                 x_origine=self.left
                 x_final=x_origine+pas
                 if(y_final-pas<self.bot):
                     if y_final==self.bot:
-                        #self.print_all(list_map)
                         return list_map
                     else:
                         y_origine=y_final
@@ -87,7 +86,6 @@ class Map:
             
             point_final=(x_final,y_final)
             point_origine_map=(x_origine,y_origine)
-        #self.print_all(list_map)
         return list_map
     
 
