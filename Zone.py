@@ -1,29 +1,30 @@
 from Map import Map
 from utils import get_distance, diviseur
 
-"""
-La classe zone a pour but la création de cluster sur chacune des maps
-"""
+
 class Zone:
     """
-    Classe Zone
-    gifts: listd de cadeau
-    cluster: une liste de cadeau regroupé sur la map
-    list_ration: la liste des ratio point poid pour chaque cluster 
+    La classe zone a pour but la création de cluster sur chacune des maps
     """
 
     def __init__(self, gifts:list):
+        """
+        gifts: listd de cadeau
+        cluster: une liste de cadeau regroupé sur la map
+        list_ration: la liste des ratio point poid pour chaque cluster 
+        """
         self.gifts = gifts
         self.cluster=[]
         self.list_ratio=[]
         #self.initial_gift = max(gifts, key=lambda gift: gift.ratio)
 
-    """
-    Découpe la vraie map en plusieurs petite sous-map où l'on calcul la moyenne de
-    distance des points pour chaque sous map.
-    Retourne la moyenne de la moyenne de distance des points pour chaque sous-map
-    """
+
     def moyenne_points(self,map:Map,santa):
+        """
+        Découpe la vraie map en plusieurs petite sous-map où l'on calcul la moyenne de
+        distance des points pour chaque sous map.
+        Retourne la moyenne de la moyenne de distance des points pour chaque sous-map
+        """
         list_scale=map.split_in_scale(santa.taille_map//10)
         list_moyenne=[]
         for scale in list_scale:
@@ -45,11 +46,12 @@ class Zone:
             return 10
         return int(somme_moyenne/len(list_moyenne))+santa.taille_map//(santa.taille_map//diviseur(santa.taille_map))
 
-    """
-    Création des clusters
-    distance_moyenne: la moyenne de distance des points sur la map (obtenue par la méthode: moyenne_points)
-    """
+    
     def clusterisation(self,distance_moyenne):
+        """
+        Création des clusters
+        distance_moyenne: la moyenne de distance des points sur la map (obtenue par la méthode: moyenne_points)
+        """
         list_cluster=[]
         for gift_1 in self.gifts:
             list_courante=[]
@@ -74,10 +76,11 @@ class Zone:
         self.cluster=list_cluster
         return list_cluster
 
-    """
-    Calcule le score total d'un cluster
-    """
+    
     def calcul_score_total_cluster(self):
+        """
+        Calcule le score total d'un cluster
+        """
         list_score=[]
         for cluster in self.cluster:
             somme_score_cluster=0
@@ -87,10 +90,10 @@ class Zone:
         return list_score
 
 
-    """
-    calcul de ratio poid point de chaque cluster et les ajoutes à la liste de ratio
-    """
     def cacul_ratio_par_cluster(self):
+        """
+        calcul de ratio poid point de chaque cluster et les ajoutes à la liste de ratio
+        """
         list_ratio=[]
         for cluster in self.cluster:
             ratio = 0
