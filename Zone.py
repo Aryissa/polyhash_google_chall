@@ -1,10 +1,15 @@
 from Map import Map
 from utils import get_distance, diviseur
 
+"""
+La classe zone a pour but la création de cluster sur chacune des maps
+"""
 class Zone:
     """
     Classe Zone
-    Une zone contient une liste de cadeaux
+    gifts: listd de cadeau
+    cluster: une liste de cadeau regroupé sur la map
+    list_ration: la liste des ratio point poid pour chaque cluster 
     """
 
     def __init__(self, gifts:list):
@@ -14,7 +19,9 @@ class Zone:
         #self.initial_gift = max(gifts, key=lambda gift: gift.ratio)
 
     """
-    Calcule la moyenne de distance des points sur toute la map
+    Découpe la vraie map en plusieurs petite sous-map où l'on calcul la moyenne de
+    distance des points pour chaque sous map.
+    Retourne la moyenne de la moyenne de distance des points pour chaque sous-map
     """
     def moyenne_points(self,map:Map,santa):
         list_scale=map.split_in_scale(santa.taille_map//10)
@@ -40,6 +47,7 @@ class Zone:
 
     """
     Création des clusters
+    distance_moyenne: la moyenne de distance des points sur la map (obtenue par la méthode: moyenne_points)
     """
     def clusterisation(self,distance_moyenne):
         list_cluster=[]
@@ -78,6 +86,10 @@ class Zone:
             list_score.append(somme_score_cluster)
         return list_score
 
+
+    """
+    calcul de ratio poid point de chaque cluster et les ajoutes à la liste de ratio
+    """
     def cacul_ratio_par_cluster(self):
         list_ratio=[]
         for cluster in self.cluster:
