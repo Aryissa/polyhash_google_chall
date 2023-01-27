@@ -8,8 +8,18 @@ Le fichier `README.md` est écrit en [**Markdown**](https://docs.github.com/en/g
 Fonctionnement du projet
 ========================
 
-Description du fonctionnement du projet, notamment comment le lancer.
+L'utilisation est très simple, les maps étants dans `./input/`, on utilise la commande python suivante :
 
+`python3 polyhash.py ./input/<map>`
+
+Example sous linux : 
+
+`python3 polyhash.py input/a_an_example.in.txt`
+
+
+Le résultat sortira alors dans `./output.txt`
+
+La fonction `solve` dans `solver.py` choisis automatiquement la meilleure stratégie.
 
 L'équipe
 ========
