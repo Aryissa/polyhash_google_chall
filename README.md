@@ -72,6 +72,38 @@ Une fois la moyenne de moyenne calculé on passe a la création de cluster alors
 Maintenant que les clusters sont remplis, pour chaque cluster nous allons calculé le chemin le plus court. Pour cela nous récupérons le cadeau le plus proche du pére du cluster, nous mettons ce cadeau dans une liste puis depuis ce cadeau nous ajoutons son cadeau le plus proche et ainsi de suite jusqu'a avoir tous les cadeaux du cluster dans la liste trier.
 Nous avons enfin tous les composants pour commencer à faire naviguer le Père Noël avec cette stratégies. Pour cela nous vérifions dans un premier temps si nous sommes sur le point (0,0) si oui alors on fait le plein de cadeaux et de carottes. Tant que le poid tu Père Noël est inférieur au poid maximum (que nous définissons) alors on continue de prendre des cadeaux mais si nous dépassons alors nous ne prenons pas le cadeaux qui nous fait dépasser puis nous comblons le poid tu Père Noël avec des carottes. Enfin une fois charger le Père Noël part livrer les cadeaux tout en vérifiant si une fois arriver au prochain cadeau il aura assez de carotte pour revenir en (0,0). Si on a plus assez de carotte alors on revient en (0,0) refaire le plein de cadeau et de carotte. Nous faisons cela pour tous les clusters de la map jusqu'a ce que ce que le temps du Père Noël vaut le temps maximal de la Map.
 
+description de l'organisation du code (en packages, modules, classes, fonctions)
+================================================================================
+Tout d’abord, nous avons créé une classe Gift avec les attribut associé, soit le nom, le poids, son score ainsi que sa position en x et en y. 
+Par la suite, nous avons donc créé la classe Santa pour symboliser notre père noël. Pour se faire, nous lui avons implémenté quelques attributs qui changent au fur et à mesure que le code s'exécute. 
+Ses attributs sont donc : 
+- son poids actuel ( cadeaux plus les carottes )
+- sa position
+- sa vitesse
+- le nombre de carottes qu’il possède ainsi que sa liste de cadeaux en sa possession.
+
+Une fois ces attributs mis en place, nous lui avons créé quelques fonctions : 
+- Charger dans sa hotte des carottes et des cadeaux ( ici, les cadeaux sont retiré de la liste générale puis stocker dans une liste temporaire le temps d’être livré )
+- Pouvoir livrer les cadeaux ( ce qui les retire de sa liste de cadeaux embarqué dans sa hotte )
+- Connaître l'accélération maximum à laquelle il peut aller grâce à son poids actuel. 
+- La fonction add_output permet de retranscrire les actions du père noël sous forme de texte afin de se faire évaluer par l’arbitre. 
+- Les fonctions affichages quant à elles permettent l’affichage des différentes maps ainsi que de vecteurs de déplacements du père noël. 
+
+Nous avons aussi créé une classe game qui permet de recuperer toute les donnée de chaque jeu de donnée, soit : 
+- le temps maximum
+- le temps actuel
+- la distance maximum a lequel le père noël peut livrer les cadeaux
+- les accélérations possibles en fonctions du poids
+- le nombres de gift total
+
+Puis pour finir, celle qui nous aura pris le plus de temps fut celle de la navigation. En effet, c’est dans celle-ci que toutes nos solutions sont retranscrites. Pour se faire, ici, Nous avons aussi plusieurs fonctions : 
+- La fonction go_point_slow qui permet d’aller à un point avec une vitesse maximale très limitée. 
+- La fonction go_point, qui reprend la fonction précédente sans limite de vitesse. 
+- les fonctions predict_carrots, qui nous ont permis de prédire combien de carottes seront nécessaires pour faire l’aller retour. 
+- chemin_kruskal, qui nous a permis de trier la liste et de savoir quels cadeaux allez déposer en premier pour avoir le chemin le plus court.
+- Deplacements_cluster qui dépend de la classe cluster, dans laquelle les cadeaux sont regroupés par paquet puis trier par groupe du plus intéressant ( en fonction du poids, de la distance et de scores ) au moins intéressant. Cette fonction permet donc de se déplacer dans les  clusters. 
+line
+
 
 bugs et limitations connu.e.s
 =============================
