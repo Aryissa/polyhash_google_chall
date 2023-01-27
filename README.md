@@ -29,4 +29,44 @@ L'équipe
 - allan guillard : allan.guillard@etu.univ-nantes.fr
 - Evan Godec : evan.godec@etu.univ-nantes.fr
 
-L'objectif de ce projet est de faire delivrer un maximum de cadeau au père noël. Cependant, des contraintes de temp, de "carburant" et de points. 
+Descriptif du projet
+====================
+
+Le but est de déplacer le père noël de manière à ce qu’il puisse distribuer le maximum de cadeau dans un temps imparti. Pour cela sa maison se situe au point (0,0) de chaque map. Pour que le Père Noël se déplace nous pouvons donner des carottes aux reines, cela permet d'accélérer le Père Noël. Son accélération est limitée en fonction de son poids (plus il est lourd plus l'accélération possible diminue). Le poid du Père Noël se calcule par la somme des poids des cadeaux qu’il portent et des carottes (une carotte= 1 kilo). L’accélération du Père Noël peut se faire que sur un seul axe à la fois x ou y. Certes l’accélération du Père Noël est finie néanmoins sa vitesse est infinie. 
+Lorsque le Père Noël se déplace le temps s’incrémente de 1 néanmoins le chargement de cadeau ou le dépôts de cadeaux ne compte pas de temps supplémentaire.
+Le Père Noël possède une range, il peut alors livrer les cadeaux dans la range autour de lui.
+
+répartition des tâches/fonctions du projet au sein de l'équipe
+===============================================================
+
+Pour la répartition nous avons:
+- Erwan Brunellière et Gabriel Comte: Développeur de stratégie. Rôle responsable de coder les stratégies permettant de naviguer et déposer les cadeaux de manière optimisée.
+- Allan Guillard: Développeur de la Visualisation. Rôle responsable de coder dans un premier temps l’affichage (avant que le site nous le permette) puis l’affichage de groupe de cadeau.
+- Evan Godec: Développeur Déplacement. Rôle responsable de coder la première fonction de déplacement du Père Noël sur un point précis.
+
+procédure d'installation
+========================
+
+`import de matplotlib.pyplot`
+`import de math`
+`import de print`
+
+
+procédure d'exécution
+=====================
+
+`python3 polyhash.py input/nom_du_fichier`
+
+détail de la/des stratégie.s mise.s en oeuvre et commentaire à propos des performances (temps d'exécution et place mémoire)
+===========================================================================================================================
+
+_stratégie ligne droite :_
+
+
+
+_stratégie cluster :_
+La stratégie de cluster a pour but de creéer dans la map des packets de cadeaux raproché comme nous poucons l'avoir dans la map b (4 packets de cadeau ou cluster) ou d (29 packets de cadeau ou cluster). Pour cela dans un premier temps nous découpons la map en plusieurs carré d'environ même dimension (la difficulté étant pour les bords de droites et du bas car nous commençons en haut a gauche). Une fois la map découpé en plusieurs sous-map nous faisons la moyenne de distance des points contenues dans chaque sous map puis nous faisons une moyenne de la moyenne de distance des points dans chaque sous map. Cette moyenne de moyenne nous permet d'avoir une distance moyenne réaliste séparant chaque cadeaux qui sont déjà proche. Cette moyenne nous permettra alors de faciliter la création de cluster. 
+Une fois la moyenne de moyenne calculé on passe a la création de cluster alors on créer une liste qui stockera tous les cluster (qui sont des listes de cadeaux). Pour chaque cadeau: 
+- s'il n'est pas déjà dans un cluster on créée un nouveau cluster et on ajoute tous ses cadeaux qui sont à une distance qui est la distance moyenne calculé précedement.
+- si le cadeau est déjà dans un cluster alors on récupère le cluster existant et on ajoute ses cadeaux qui sont autour de lui (avec une distance égale à la distance moyenne calculé précédement).
+Maintenant que les clusters sont remplis pour chaque cluster nous allons calculé le chemin le plus court 
