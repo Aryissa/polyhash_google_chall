@@ -101,7 +101,7 @@ Puis pour finir, celle qui nous aura pris le plus de temps fut celle de la navig
 - La fonction go_point, qui reprend la fonction précédente sans limite de vitesse. 
 - les fonctions predict_carrots, qui nous ont permis de prédire combien de carottes seront nécessaires pour faire l’aller retour. 
 - chemin_kruskal, qui nous a permis de trier la liste et de savoir quels cadeaux allez déposer en premier pour avoir le chemin le plus court.
-- Deplacements_cluster qui dépend de la classe cluster, dans laquelle les cadeaux sont regroupés par paquet puis trier par groupe du plus intéressant ( en fonction du poids, de la distance et de scores ) au moins intéressant. Cette fonction permet donc de se déplacer dans les  clusters. 
+- Deplacements_cluster qui dépend de la classe cluster, dans laquelle les cadeaux sont regroupés par paquet puis trier par groupe du plus intéressant (en fonction du poids, de la distance et de scores) au moins intéressant. Cette fonction permet donc de se déplacer dans les  clusters. 
 line
 
 
