@@ -60,11 +60,47 @@ procédure d'exécution
 détail de la/des stratégie.s mise.s en oeuvre et commentaire à propos des performances (temps d'exécution et place mémoire)
 ===========================================================================================================================
 
-_stratégie ligne droite :_
+**stratégie ligne droite :**
+Il y a 3 strétégies de ligne droite disponibles. Elle commencent du plus simple au plus complexe.
+
+Chaque stratégie commence par avancer dans l'axe des x, on pourrait commencer par y, certaines fonctions sont prévues pour mais pas toutes.
+
+**La premiere**va sur une ligne droite à vitesse constante et ditribue exactement sur une ligne.
+Elle permet d'utiliser exactement 8 carottes.
+On regarde si un cadeau est sur la droites de de vecteur (a, b) grace à l'equation 
+`x + (b / a) * gift.x + b == y + gift.y`
+
+Elle utilise 3 fonctions.
+
+**line** permet d'énumérer les demies-droites avec pour chacune leur vecteur et la liste des cadeaux qui sont exactement dessus.
+
+**lines_actions** permet de simuler l'action que fera le père noël, ainsi décider quels cadeaux prendre et combien de temps ça prendra.
+
+**lines_navigate_x** permet de réaliser les mouvements du père noël.
+
+**La Deuxieme** fonctionne exactement comma la premiere, à l'exception qu'elle distribue avec sa distance de distribution.
+On regarde si le cadeau se situe entre deux droites. Celle de la premiere +- la distance.
+
+Donc l'équation `y + gift.y + self.game.range >= x_res >= y + gift.y - self.game.range`
+
+Elle utilise 3 fonctions :
+
+* line_r
+* lines_r_actions
+* lines_r_navigate_x
+
+**La Troisième** quant à elle, accelère tout au long. Pour réaliser une ligne droite, on accélère deux fois de suite dans chaque direction. Ensuite on décelère exatement dans le même ordre pour revenir à la vitesse 0.
+
+Elle utilise 5 fonctions :
+* **find_nb_accel** qui calcule le nombre d'acceleration pour atteindre le dernier cadeau avant de faire demi tour
+* line_r
+* line_rs_actions
+* line_rs_navigate_x
+* lines_rs_return_x
 
 
 
-_stratégie cluster :_
+**stratégie cluster :**
 La stratégie de cluster a pour but de creéer dans la map des packets de cadeaux raproché comme nous poucons l'avoir dans la map b (4 packets de cadeau ou cluster) ou d (29 packets de cadeau ou cluster). Pour cela dans un premier temps nous découpons la map en plusieurs carré d'environ même dimension (la difficulté étant pour les bords de droites et du bas car nous commençons en haut a gauche). Une fois la map découpé en plusieurs sous-map nous faisons la moyenne de distance des points contenues dans chaque sous map puis nous faisons une moyenne de la moyenne de distance des points dans chaque sous map. Cette moyenne de moyenne nous permet d'avoir une distance moyenne réaliste séparant chaque cadeaux qui sont déjà proche. Cette moyenne nous permettra alors de faciliter la création de cluster. 
 Une fois la moyenne de moyenne calculé on passe a la création de cluster alors on créer une liste qui stockera tous les cluster (qui sont des listes de cadeaux). Pour chaque cadeau: 
 - s'il n'est pas déjà dans un cluster on créée un nouveau cluster et on ajoute tous ses cadeaux qui sont à une distance qui est la distance moyenne calculé précedement.
@@ -110,44 +146,6 @@ bugs et limitations connu.e.s
 Il y a une limite connue de tous les codes que nous possédons, suite à une mauvaise compréhension des consignes l'accélération maximales est aussi la vitesse maximale c'est à dire que si l'accélération max est à 16 alors nous pourrons pas aller plus vite que la vitesse 16
 
 
-_bugs et limitation pour le cluster_
+**bugs et limitation pour le cluster**
 Du côté de l'algorithme de cluster il ne fonctionne pas suite à une érreur un possible qui est transmi depuis une autre méthode de déplacement qu'on ne comprennais pas. Son score pour la map b est d'environ 6100 points. C'est pour cette limitation très forte qu'on a pas pu intégrer la solution de cluster.
 
-stratégie de ligne droite
-=========================
-Il y a 3 strétégies de ligne droite disponibles. Elle commencent du plus simple au plus complexe.
-
-Chaque stratégie commence par avancer dans l'axe des x, on pourrait commencer par y, certaines fonctions sont prévues pour mais pas toutes.
-
-**La premiere**va sur une ligne droite à vitesse constante et ditribue exactement sur une ligne.
-Elle permet d'utiliser exactement 8 carottes.
-On regarde si un cadeau est sur la droites de de vecteur (a, b) grace à l'equation 
-`x + (b / a) * gift.x + b == y + gift.y`
-
-Elle utilise 3 fonctions.
-
-**line** permet d'énumérer les demies-droites avec pour chacune leur vecteur et la liste des cadeaux qui sont exactement dessus.
-
-**lines_actions** permet de simuler l'action que fera le père noël, ainsi décider quels cadeaux prendre et combien de temps ça prendra.
-
-**lines_navigate_x** permet de réaliser les mouvements du père noël.
-
-**La Deuxieme** fonctionne exactement comma la premiere, à l'exception qu'elle distribue avec sa distance de distribution.
-On regarde si le cadeau se situe entre deux droites. Celle de la premiere +- la distance.
-
-Donc l'équation `y + gift.y + self.game.range >= x_res >= y + gift.y - self.game.range`
-
-Elle utilise 3 fonctions :
-
-* line_r
-* lines_r_actions
-* lines_r_navigate_x
-
-**La Troisième** quant à elle, accelère tout au long. Pour réaliser une ligne droite, on accélère deux fois de suite dans chaque direction. Ensuite on décelère exatement dans le même ordre pour revenir à la vitesse 0.
-
-Elle utilise 5 fonctions :
-* **find_nb_accel** qui calcule le nombre d'acceleration pour atteindre le dernier cadeau avant de faire demi tour
-* line_r
-* line_rs_actions
-* line_rs_navigate_x
-* lines_rs_return_x
