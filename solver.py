@@ -122,6 +122,6 @@ def go_cluster(challenge):
     cluster = zone.clusterisation(moyenne)
 
     for c in cluster:
-        navigation.deplacement_cluster(c, santa, 1000, moyenne)
+        navigation.deplacement_cluster(c, santa, challenge["accelerations"][0]["weight_interval_to"], moyenne)
         if santa.time >= game.max_time:
             break
