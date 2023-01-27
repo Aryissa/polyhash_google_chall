@@ -1,8 +1,15 @@
 import Gift
 from Carre import Carre
 
+
+
 class Map:
+    """
+    Class Map
+    Permet la définission d'une Map réduite 
+    """
     def __init__(self,gifts:list):
+        #définission des quatres coté de la map
         self.top,self.bot,self.left,self.right,self.l_x,self.l_y=0,0,0,0,0,0
         for gift in gifts:
             x=gift.x
@@ -21,13 +28,25 @@ class Map:
         self.l_x=self.right-self.left
         self.l_y=self.top-self.bot
     
+
+    
     def in_map(self,x,y):
+        """
+        Permet de dire si un point se situe dans la map
+        x: position x du point
+        y; position y du point
+        """
         if (x<self.left or x>self.right or y>self.top or y<self.bot):
             return False
         return True
     
-    #pas représente en combien tous les combien on créer un carré
+    
     def split_in_scale(self,pas:int):
+        """
+        Permet la création d'une liste de Carré qui découpe la Map
+        Cette liste représente l'ensemble des sous-map de la Map
+        pas: est un int qui définit la taille de chaque carré
+        """
         list_map=[]
         point_origine_map=(self.left,self.top)
         point_final=(self.left+pas,self.top-pas)
@@ -38,12 +57,11 @@ class Map:
             x_origine,y_origine=point_origine_map
             x_final,y_final=point_final
             
-            if(x_final==self.right): #si notre x tombe pile sur le bord alors on repars
+            if(x_final==self.right): #si notre x tombe pile sur le bord de la map alors on reviens au x d'origine
                 x_origine=self.left
                 x_final=x_origine+pas
                 if(y_final-pas<self.bot):
                     if y_final==self.bot:
-                        #self.print_all(list_map)
                         return list_map
                     else:
                         y_origine=y_final
@@ -68,10 +86,13 @@ class Map:
             
             point_final=(x_final,y_final)
             point_origine_map=(x_origine,y_origine)
-        #self.print_all(list_map)
         return list_map
     
+
     def print_all(self,list):
+        """
+        permet d'afficher l'ensemble des listes de Carré
+        """
         print("map: top ", self.top,"map: bot ",self.bot,"map: left ",self.left,"map: right ", self.right )
         for carre in list:
             print("point origine: ",carre.point_origine," point final: ",carre.point_final)
