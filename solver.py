@@ -12,6 +12,7 @@ from Navigation import Navigation
 from Map import Map
 from Zone import Zone
 
+
 def solve(challenge):
     """Résout un challenge donné.
     """
@@ -101,7 +102,6 @@ def go_one_gift_fast(challenge):
 
     santa.load_gift(THE_GIFT)
 
-
     predict = navigation.predict_carrots_go(THE_GIFT.x, THE_GIFT.y)
     santa.load_carrot(predict * 2 + 10)
 
@@ -110,17 +110,18 @@ def go_one_gift_fast(challenge):
     santa.deliver(THE_GIFT)
     return santa
 
+
 def go_cluster(challenge):
     game = Game(challenge)
     map = Map(game.gifts)
     zone = Zone(game.gifts)
-    santa = Santa(game,zone)
+    santa = Santa(game, zone)
     navigation = Navigation(santa, game)
 
-    moyenne= zone.moyenne_points(map,santa)
+    moyenne = zone.moyenne_points(map, santa)
     cluster = zone.clusterisation(moyenne)
 
     for c in cluster:
-        navigation.deplacement_cluster(c,santa,1000,moyenne)
-        if santa.time>=game.max_time:
+        navigation.deplacement_cluster(c, santa, 1000, moyenne)
+        if santa.time >= game.max_time:
             break
