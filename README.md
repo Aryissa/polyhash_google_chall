@@ -107,8 +107,8 @@ line
 
 bugs et limitations connu.e.s
 =============================
-Il y a une limite connue de tous les codes que nous possédons, suite à une mauvaise compréhension des consignes l'accélérations maximales est aussi la vitesse maximal c'est a dire que si l'accélération max est à 16 alors nous pourrons pas aller plus vite que la vitess 16
+Il y a une limite connue de tous les codes que nous possédons, suite à une mauvaise compréhension des consignes l'accélération maximales est aussi la vitesse maximale c'est à dire que si l'accélération max est à 16 alors nous pourrons pas aller plus vite que la vitesse 16
 
 
 _bugs et limitation pour le cluster_
-Du côté de l'algorithme de cluster il ne fonctionne pas suite à une érreur un possible qui est transmi depuis une autre méthode de déplacement qu'on ne comprennais pas. Son score pour la map b est d'environ 6100 points. C'est pour cette limitation très forte qu'on a pas pu intégrer la solution de cluster.
+Du côté de l'algorithme de cluster il ne fonctionne pas suite à une erreur un possible qui est transmis depuis une autre méthode de déplacement qu'on ne comprennais pas. Son score pour la map b est d'environ 6100 points. C'est pour cette limitation très forte qu'on a pas pu intégrer la solution de cluster.
