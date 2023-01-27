@@ -69,4 +69,12 @@ La stratégie de cluster a pour but de creéer dans la map des packets de cadeau
 Une fois la moyenne de moyenne calculé on passe a la création de cluster alors on créer une liste qui stockera tous les cluster (qui sont des listes de cadeaux). Pour chaque cadeau: 
 - s'il n'est pas déjà dans un cluster on créée un nouveau cluster et on ajoute tous ses cadeaux qui sont à une distance qui est la distance moyenne calculé précedement.
 - si le cadeau est déjà dans un cluster alors on récupère le cluster existant et on ajoute ses cadeaux qui sont autour de lui (avec une distance égale à la distance moyenne calculé précédement).
-Maintenant que les clusters sont remplis pour chaque cluster nous allons calculé le chemin le plus court 
+Maintenant que les clusters sont remplis, pour chaque cluster nous allons calculé le chemin le plus court. Pour cela nous récupérons le cadeau le plus proche du pére du cluster, nous mettons ce cadeau dans une liste puis depuis ce cadeau nous ajoutons son cadeau le plus proche et ainsi de suite jusqu'a avoir tous les cadeaux du cluster dans la liste trier.
+Nous avons enfin tous les composants pour commencer à faire naviguer le Père Noël avec cette stratégies. Pour cela nous vérifions dans un premier temps si nous sommes sur le point (0,0) si oui alors on fait le plein de cadeaux et de carottes. Tant que le poid tu Père Noël est inférieur au poid maximum (que nous définissons) alors on continue de prendre des cadeaux mais si nous dépassons alors nous ne prenons pas le cadeaux qui nous fait dépasser puis nous comblons le poid tu Père Noël avec des carottes. Enfin une fois charger le Père Noël part livrer les cadeaux tout en vérifiant si une fois arriver au prochain cadeau il aura assez de carotte pour revenir en (0,0). Si on a plus assez de carotte alors on revient en (0,0) refaire le plein de cadeau et de carotte. Nous faisons cela pour tous les clusters de la map jusqu'a ce que ce que le temps du Père Noël vaut le temps maximal de la Map.
+
+
+bugs et limitations connu.e.s
+=============================
+
+_bugs et limitation pour le cluster_
+ 
