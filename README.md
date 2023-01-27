@@ -111,4 +111,43 @@ Il y a une limite connue de tous les codes que nous possédons, suite à une mau
 
 
 _bugs et limitation pour le cluster_
-Du côté de l'algorithme de cluster il ne fonctionne pas suite à une erreur un possible qui est transmis depuis une autre méthode de déplacement qu'on ne comprennais pas. Son score pour la map b est d'environ 6100 points. C'est pour cette limitation très forte qu'on a pas pu intégrer la solution de cluster.
+Du côté de l'algorithme de cluster il ne fonctionne pas suite à une érreur un possible qui est transmi depuis une autre méthode de déplacement qu'on ne comprennais pas. Son score pour la map b est d'environ 6100 points. C'est pour cette limitation très forte qu'on a pas pu intégrer la solution de cluster.
+
+stratégie de ligne droite
+=========================
+Il y a 3 strétégies de ligne droite disponibles. Elle commencent du plus simple au plus complexe.
+
+Chaque stratégie commence par avancer dans l'axe des x, on pourrait commencer par y, certaines fonctions sont prévues pour mais pas toutes.
+
+**La premiere**va sur une ligne droite à vitesse constante et ditribue exactement sur une ligne.
+Elle permet d'utiliser exactement 8 carottes.
+On regarde si un cadeau est sur la droites de de vecteur (a, b) grace à l'equation 
+`x + (b / a) * gift.x + b == y + gift.y`
+
+Elle utilise 3 fonctions.
+
+**line** permet d'énumérer les demies-droites avec pour chacune leur vecteur et la liste des cadeaux qui sont exactement dessus.
+
+**lines_actions** permet de simuler l'action que fera le père noël, ainsi décider quels cadeaux prendre et combien de temps ça prendra.
+
+**lines_navigate_x** permet de réaliser les mouvements du père noël.
+
+**La Deuxieme** fonctionne exactement comma la premiere, à l'exception qu'elle distribue avec sa distance de distribution.
+On regarde si le cadeau se situe entre deux droites. Celle de la premiere +- la distance.
+
+Donc l'équation `y + gift.y + self.game.range >= x_res >= y + gift.y - self.game.range`
+
+Elle utilise 3 fonctions :
+
+* line_r
+* lines_r_actions
+* lines_r_navigate_x
+
+**La Troisième** quant à elle, accelère tout au long. Pour réaliser une ligne droite, on accélère deux fois de suite dans chaque direction. Ensuite on décelère exatement dans le même ordre pour revenir à la vitesse 0.
+
+Elle utilise 5 fonctions :
+* **find_nb_accel** qui calcule le nombre d'acceleration pour atteindre le dernier cadeau avant de faire demi tour
+* line_r
+* line_rs_actions
+* line_rs_navigate_x
+* lines_rs_return_x
