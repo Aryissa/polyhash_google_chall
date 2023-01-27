@@ -680,14 +680,14 @@ class Navigation:
         d'une distance moyenne
         """
         nb_carrots = 0
-        #on vérifie si la range du père noel est supérieur a la moyenne de distance des points
+        # on vérifie si la range du père noel est supérieur a la moyenne de distance des points
         if self.game.range > moyenne_dist_cadeaux:
-            #si oui alors je considère qu'on peut prendre 2 fois moins de carrotes car je considère que le 
+            # si oui alors je considère qu'on peut prendre 2 fois moins de carrotes car je considère que le
             # père noel aura toujours 2 cadeaux à déposer
             nb_carrots = (len(list_cadeau) * (moyenne_dist_cadeaux / self.santa.max_acceleration())) / 2
         else:
-            #sinon on prend le maximum de la prédiction car le père noel en théorie ne pourra
-            #pas atteindre 2 cadeaux depuis un même point
+            # sinon on prend le maximum de la prédiction car le père noel en théorie ne pourra
+            # pas atteindre 2 cadeaux depuis un même point
             nb_carrots = (len(list_cadeau) * (moyenne_dist_cadeaux / self.santa.max_acceleration()))
         return int(nb_carrots)
 
@@ -844,68 +844,71 @@ class Navigation:
         # Boucle pour déposer tous les cadeaux d'un cluster dans le temps impartis
         while self.santa.time < self.game.max_time or len(chemin) != 0:
             list_cadeau = []
-            #Si on est au dépot (0,0)
+            # Si on est au dépot (0,0)
             if santa.x == 0 and santa.y == 0:
                 taille = len(chemin)
                 for i in range(0, taille):
-                    #On remplit le traineau du père noel temps qu'on ne dépasse pas le poid max
+                    # On remplit le traineau du père noel temps qu'on ne dépasse pas le poid max
                     if (self.poid_liste(list_cadeau) + chemin[i].weight + self.santa.weight < max_weight):
                         list_cadeau.append(chemin[i])
                         chemin.remove(chemin[i])
                     else:
                         if (len(list_cadeau) != 0):
-                            #On remplis le reste du poid du traineau par des carrotes
-                            self.santa.load_carrot(max_weight - self.poid_liste(list_cadeau) - self.santa.nb_carrots - 1)
+                            # On remplis le reste du poid du traineau par des carrotes
+                            self.santa.load_carrot(
+                                max_weight - self.poid_liste(list_cadeau) - self.santa.nb_carrots - 1)
                             gift_proche = gift_plus_proche(cluster, self.santa.x, self.santa.y)
                             if (self.game.range != 0):
-                                #prédiction de carrotes si la range du père noel est différentes de 0 
-                                #le calcul change car nous partons du principe que si le père noel a une range 
-                                #alors depuis un cadeau il peut en déposer un deuxième
+                                # prédiction de carrotes si la range du père noel est différentes de 0
+                                # le calcul change car nous partons du principe que si le père noel a une range
+                                # alors depuis un cadeau il peut en déposer un deuxième
                                 prediction_carrots = ((self.predict_carrots(moyenne,
-                                                                list_cadeau) / self.game.range) - 1 + 3 * self.predict_carrots_go(
+                                                                            list_cadeau) / self.game.range) - 1 + 3 * self.predict_carrots_go(
                                     gift_proche.x, gift_proche.y)) - santa.nb_carrots
                             else:
-                                #si la range du père noel est égal a 0 
-                                prediction_carrots = (self.predict_carrots(moyenne,list_cadeau)) + self.predict_carrots(moyenne * 2, list_cadeau) - self.santa.nb_carrots
+                                # si la range du père noel est égal a 0
+                                prediction_carrots = (self.predict_carrots(moyenne,
+                                                                           list_cadeau)) + self.predict_carrots(
+                                    moyenne * 2, list_cadeau) - self.santa.nb_carrots
                             while (self.santa.nb_carrots < prediction_carrots):
-                                #si le nombre de carrote est inférieur à la prédiction de carotte alors on enlève
-                                #des cadeaux et on rajoutes des carrotes
+                                # si le nombre de carrote est inférieur à la prédiction de carotte alors on enlève
+                                # des cadeaux et on rajoutes des carrotes
                                 if len(list_cadeau) != 0:
                                     gift_suppr = list_cadeau.pop()
                                     santa.load_carrot(gift_suppr.weight - 1)
 
                         break
 
-            #on load tous les cadeaux qui sont dans la liste temporaires
+            # on load tous les cadeaux qui sont dans la liste temporaires
             for cadeau in list_cadeau:
                 self.santa.load_gift(cadeau)
 
             # Poser des cadeaux
             self.santa.gifts = list(set(santa.gifts))
-            #condition d'arrêt pour livrer des cadeaux 
+            # condition d'arrêt pour livrer des cadeaux
             while (len(self.santa.gifts) != 0 and self.santa.time < self.game.max_time):
-                #je récupère le cadeau le plus proche donc le premier élément de la list
+                # je récupère le cadeau le plus proche donc le premier élément de la list
                 x = self.santa.gifts[0].x
                 y = self.santa.gifts[0].y
-                #pour un santa qui n'a pas de range si son nombre de carotte est supérieurs à ce dont il a besoin pour revenir a la maison alors on voit si on peut déposer
+                # pour un santa qui n'a pas de range si son nombre de carotte est supérieurs à ce dont il a besoin pour revenir a la maison alors on voit si on peut déposer
                 if (self.game.range == 0 and self.santa.nb_carrots > self.predict_carrots(moyenne, list_cadeau) / len(
                         list_cadeau)):
                     distance_maison = get_distance(self.santa.x + x, self.santa.y + y, 0, 0)
-                    #on vérifie si on aura assez de carottes une fois arriver au prochain point pour revenir a la maison
-                    #si ca n'est pas le cas alors on revient faire le plein a la maison
+                    # on vérifie si on aura assez de carottes une fois arriver au prochain point pour revenir a la maison
+                    # si ca n'est pas le cas alors on revient faire le plein a la maison
                     if self.santa.nb_carrots < (
                             self.predict_carrots(distance_maison, list_cadeau) / len(list_cadeau)) + 2:
                         break
-                    #sinon on va déposer le prochain cadeau
+                    # sinon on va déposer le prochain cadeau
                     self.go_point_slow(x, y)
-                #si la range du père noel est différent de zéro (pas fini)
+                # si la range du père noel est différent de zéro (pas fini)
                 elif (self.santa.nb_carrots > self.predict_carrots_go(x, y) and self.game.range != 0):
                     self.go(x, y)
 
                 copy_santa_gift = [g for g in self.santa.gifts]
-                #pour tous les cadeaux qui sont dans la range du santa au point où il se situe on délivre les cadeaux
+                # pour tous les cadeaux qui sont dans la range du santa au point où il se situe on délivre les cadeaux
                 for gift in copy_santa_gift:
                     if len(gifts_in_range(self.santa.x, self.santa.y, self.game.range, [gift])) != 0:
                         self.santa.deliver(gift)
-            #retour a la maison    
+            # retour a la maison
             self.go_point_slow(0, 0)
