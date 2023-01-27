@@ -3,23 +3,31 @@ class Game {
     + max_time: int
     + current_time: int
     + range: int
-    + acceleration_range: dict
+    + nb_acceleration_ranges: int
+    + acceleration_ranges: dict
     + nb_gift: int
-    + parse()
+    + __str__()
 }
 
 class Santa {
     + weight: int
     + x: int
     + y: int
-    + vx: int
-    + vy: int
+    - vx: int
+    - vy: int
     + nb_carrots: int
+    - gifts: []
     + accelerate(direction, value)
     + float()
     + load_carrot(nb: int)
     + load_gift(gift: Gift)
     + deliver(gift: Gift): bool
+    + max_acceleration(): int
+    - add_output(string: str)
+    + print()
+    + affichage_init()
+    + affichage()
+    + affichage_zone
 }
 
 class Gift {
@@ -31,12 +39,21 @@ class Gift {
 }
 
 class Navigation {
-    + coordinates: []
-    + range: int
-    + acceleration_range: dict
+    + go_point_slow(x: int, y: int)
+    + go(x: int, y: int)
+    + predict_carrots(moyenne_dist_cadeaux: int)
+    + predict_carrots_go(x: int, y:int)
+    + line_run()
+    - line(x: int, y: int): (list, list)
+    - line_actions(x: int, y: int): Dict
+    - line_navigate_x(action)
+    + deplacement_cluster(cluster, santa: Santa, max_weight: int, moyenne: float)
+    - chemin_kruskal(cluster, santa: Santa): [Gift]
 }
 
 Game o-- "*" Gift
 Santa o-- "*" Gift
 Game *- Santa
+Navigation *- "1" Santa
+Navigation *- "1" Game
 @enduml
